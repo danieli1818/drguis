@@ -17,48 +17,29 @@ import drguis.guis.effects.enchantments.Glow;
 import drguis.guis.icons.Icon;
 import drguis.guis.icons.actions.ClickAction;
 import drguis.guis.types.BaseGUI;
+import drguis.guis.types.general.MapGUI;
 
-public class SelectionGUI extends BaseGUI implements SelectionGUII {
+public class SelectionGUI extends MapGUI implements SelectionGUII {
 
-	private Map<Integer, Icon> icons;
 	private Map<Player, Integer> playerSelections;
 	
 	public SelectionGUI(int size, String title) {
 		super(size, title);
-		this.icons = new HashMap<>();
 		this.playerSelections = new HashMap<>();
 	}
 
 	@Override
-	public Icon getIconInSlot(int slot) {
-		return this.icons.get(slot);
-	}
-	
-	public Icon setIconInSlot(Icon icon, int slot) {
-		return this.icons.replace(slot, icon);
-	}
-
-	@Override
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
-		Icon icon = getIconInSlot(slot);
-		if (icon == null) {
+		if (!onClickOnSlot(player, slot, event)) {
 			return false;
 		}
-		for (ClickAction action : icon.getClickActions()) {
-			action.execute(player);
-		}
 		this.playerSelections.put(player, slot);
-		player.closeInventory();
-		event.setCancelled(true);
 		return true;
 	}
 	
 	@Override
 	public Inventory getInventory(Player player) {
-		Inventory inventory = getInventory(player);
-		for (Entry<Integer,Icon> iconEntry : this.icons.entrySet()) {
-			inventory.setItem(iconEntry.getKey(), iconEntry.getValue().getItemStack());
-		}
+		Inventory inventory = super.getInventory(player);
 		Integer selectedSlot = this.playerSelections.get(player);
 		if (selectedSlot == null) {
 			return inventory;
@@ -92,15 +73,6 @@ public class SelectionGUI extends BaseGUI implements SelectionGUII {
 		return null;
 	}
 	
-	@Override
-	public Inventory getInventory() {
-		Inventory inventory = super.getInventory();
-		for (Entry<Integer, Icon> iconEntry : this.icons.entrySet()) {
-			inventory.setItem(iconEntry.getKey(), iconEntry.getValue().getItemStack());
-		}
-		return inventory;
-	}
-
 	@Override
 	public void clearSelections() {
 		this.playerSelections.clear();

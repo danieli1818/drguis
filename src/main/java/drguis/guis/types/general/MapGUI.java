@@ -46,7 +46,7 @@ public class MapGUI extends BaseGUI {
 	
 	@Override
 	public Inventory getInventory(Player player) {
-		Inventory inventory = getInventory(player);
+		Inventory inventory = super.getInventory(player);
 		for (Entry<Integer,Icon> iconEntry : this.icons.entrySet()) {
 			inventory.setItem(iconEntry.getKey(), iconEntry.getValue().getItemStack());
 		}
