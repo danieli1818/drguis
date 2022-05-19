@@ -1,0 +1,5 @@
+name: DRGuis
+version: ${project.version}
+main: drguis.DRGuis
+authors: [DanielRottner]
+description: DRGuis Plugin For Custom GUIs.
