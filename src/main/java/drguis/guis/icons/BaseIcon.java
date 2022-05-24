@@ -1,5 +1,6 @@
 package drguis.guis.icons;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class BaseIcon implements Icon {
 	
 	public BaseIcon(ItemStack itemStack) {
 		this.itemStack = itemStack;
+		this.clickActions = new ArrayList<>();
 	}
 	
 	@Override
@@ -26,12 +28,18 @@ public class BaseIcon implements Icon {
 		return clickActions;
 	}
 	
-	public void addClickAction(ClickAction clickAction) {
+	public BaseIcon addClickAction(ClickAction clickAction) {
 		this.clickActions.add(clickAction);
+		return this;
 	}
 	
 	public boolean removeClickAction(ClickAction clickAction) {
 		return this.clickActions.remove(clickAction);
+	}
+	
+	public BaseIcon clearClickActions() {
+		this.clickActions.clear();
+		return this;
 	}
 
 }
