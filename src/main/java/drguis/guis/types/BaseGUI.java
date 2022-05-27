@@ -5,8 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import drguis.guis.GUI;
+import drguis.guis.icons.Icon;
 
-public abstract class BaseGUI implements GUI {
+public abstract class BaseGUI<T extends Icon> implements GUI<T> {
 
 	private int size;
 	private String title;

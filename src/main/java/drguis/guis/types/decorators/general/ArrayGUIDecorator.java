@@ -1,30 +1,33 @@
-package drguis.guis.types.general;
+package drguis.guis.types.decorators.general;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
+import drguis.guis.GUI;
 import drguis.guis.icons.Icon;
 import drguis.guis.icons.actions.ClickAction;
-import drguis.guis.types.BaseGUI;
+import drguis.guis.types.decorators.GUIDecorator;
 
-public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
-	
+public class ArrayGUIDecorator<T extends Icon> extends GUIDecorator<T> {
+
 	private List<T> icons;
 	
-	public ArrayGUI(int size, String title) {
-		super(size, title);
+	public ArrayGUIDecorator(GUI<T> gui) {
+		super(gui);
 		this.icons = new ArrayList<>();
 	}
-
+	
 	@Override
 	public T getIconInSlot(int slot) {
-		return this.icons.get(slot);
+		T icon = this.icons.get(slot);
+		if (icon == null) {
+			icon = super.getIconInSlot(slot);
+		}
+		return icon;
 	}
 	
 	public boolean addIcon(T icon) {
@@ -47,7 +50,7 @@ public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
 		Icon icon = this.icons.get(slot);
 		if (icon == null) {
-			return false;
+			return super.onClickOnSlot(player, slot, event);
 		}
 		for (ClickAction action : icon.getClickActions()) {
 			action.execute(player);
@@ -63,10 +66,13 @@ public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
 		for (Icon icon : this.icons) {
 			System.out.println(icon.getItemStack());
 		}
-		inventory.setContents(this.icons.stream().
-				map((Icon icon)->icon.getItemStack()).
-				collect(Collectors.toList()).
-				toArray(new ItemStack[this.icons.size()]));
+		int iconIndex = 0;
+		for (Icon icon : this.icons) {
+			if (icon != null) {
+				inventory.setItem(iconIndex, icon.getItemStack());
+			}
+			iconIndex++;
+		}
 		System.out.println(inventory.getItem(0));
 		return inventory;
 	}

@@ -1,4 +1,4 @@
-package drguis.guis.types.general;
+package drguis.guis.types.decorators.general;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,33 +8,42 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+import drguis.guis.GUI;
 import drguis.guis.icons.Icon;
 import drguis.guis.icons.actions.ClickAction;
-import drguis.guis.types.BaseGUI;
+import drguis.guis.types.decorators.GUIDecorator;
 
-public class MapGUI<T extends Icon> extends BaseGUI<T> {
+public class MapGUIDecorator<T extends Icon> extends GUIDecorator<T> {
 
 	private Map<Integer, T> icons;
 	
-	public MapGUI(int size, String title) {
-		super(size, title);
+	public MapGUIDecorator(GUI<T> gui) {
+		super(gui);
 		this.icons = new HashMap<>();
 	}
-
+	
 	@Override
 	public T getIconInSlot(int slot) {
-		return this.icons.get(slot);
+		T icon = this.icons.get(slot);
+		if (icon == null) {
+			icon = super.getIconInSlot(slot);
+		}
+		return icon;
 	}
 	
 	public T setIconInSlot(T icon, int slot) {
-		return this.icons.replace(slot, icon);
+		T replacedIcon = this.icons.replace(slot, icon);
+		if (replacedIcon == null) {
+			replacedIcon = super.getIconInSlot(slot);
+		}
+		return replacedIcon;
 	}
 
 	@Override
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
-		Icon icon = getIconInSlot(slot);
+		Icon icon = this.icons.get(slot);
 		if (icon == null) {
-			return false;
+			return super.onClickOnSlot(player, slot, event);
 		}
 		for (ClickAction action : icon.getClickActions()) {
 			action.execute(player);

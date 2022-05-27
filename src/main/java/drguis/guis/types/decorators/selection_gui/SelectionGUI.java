@@ -1,10 +1,9 @@
-package drguis.guis.types.selection_gui;
+package drguis.guis.types.decorators.selection_gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,24 +12,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import drenchantments.enchantments.DREnchantmentsManager;
+import drguis.guis.GUI;
 import drguis.guis.effects.enchantments.Glow;
 import drguis.guis.icons.Icon;
-import drguis.guis.icons.actions.ClickAction;
-import drguis.guis.types.BaseGUI;
-import drguis.guis.types.general.ArrayGUI;
+import drguis.guis.types.decorators.GUIDecorator;
 
-public class ArraySelectionGUI extends ArrayGUI implements SelectionGUII {
+public class SelectionGUI<T extends Icon> extends GUIDecorator<T> implements SelectionGUII<T> {
 
 	private Map<Player, Integer> playerSelections;
 	
-	public ArraySelectionGUI(int size, String title) {
-		super(size, title);
+	public SelectionGUI(GUI<T> gui) {
+		super(gui);
 		this.playerSelections = new HashMap<>();
 	}
 
 	@Override
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
-		if (!super.onClickOnSlot(player, slot, event)) {
+		if (!onClickOnSlot(player, slot, event)) {
 			return false;
 		}
 		this.playerSelections.put(player, slot);
@@ -39,17 +37,16 @@ public class ArraySelectionGUI extends ArrayGUI implements SelectionGUII {
 	
 	@Override
 	public Inventory getInventory(Player player) {
-		Inventory inventory = super.getInventory(player);
+		Inventory inventory = getGUI().getInventory(player);
 		Integer selectedSlot = this.playerSelections.get(player);
 		if (selectedSlot == null) {
 			return inventory;
 		}
-		System.out.println("Player has a selection!");
 		ItemStack selectedItemStack = getItemStackInSlot(selectedSlot);
 		if (selectedItemStack == null) {
 			return inventory;
 		}
-		inventory.setItem(selectedSlot, selectItemStack(selectedItemStack.clone()));
+		inventory.setItem(selectedSlot, selectItemStack(selectedItemStack));
 		return inventory;
 	}
 	
@@ -76,8 +73,8 @@ public class ArraySelectionGUI extends ArrayGUI implements SelectionGUII {
 	
 	@Override
 	public void clearSelections() {
-		System.out.println("Cleared Players Selection!");
 		this.playerSelections.clear();
+		
 	}
 
 }
