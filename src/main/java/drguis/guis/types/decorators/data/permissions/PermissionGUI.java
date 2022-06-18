@@ -1,24 +1,24 @@
-package drguis.guis.types.decorators.permissions;
+package drguis.guis.types.decorators.data.permissions;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import drguis.guis.GUI;
 import drguis.guis.icons.types.PermissionIcon;
-import drguis.guis.types.decorators.GUIDecorator;
+import drguis.guis.types.DataGUI;
+import drguis.guis.types.decorators.data.GUIDataDecorator;
 
-public class PermissionGUI<T extends PermissionIcon> extends GUIDecorator<T> implements GUI<T> {
+public class PermissionGUI<T extends PermissionIcon> extends GUIDataDecorator<T> {
 
 	private String nonPermissionMessage;
 	
-	public PermissionGUI(GUI<T> gui, String nonPermissionMessage) {
+	public PermissionGUI(DataGUI<T> gui, String nonPermissionMessage) {
 		super(gui);
 		this.nonPermissionMessage = nonPermissionMessage;
 	}
 	
 	@Override
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
-		T icon = getIconInSlot(slot);
+		T icon = getDataIconInSlot(slot);
 		if (icon == null) {
 			return super.onClickOnSlot(player, slot, event);
 		}

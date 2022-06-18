@@ -2,29 +2,55 @@ package drguis.guis.types.general;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import drguis.guis.icons.Icon;
 import drguis.guis.icons.actions.ClickAction;
-import drguis.guis.types.BaseGUI;
+import drguis.guis.icons.spaces.RangeSpace;
+import drguis.guis.icons.spaces.Space;
+import drguis.guis.types.BaseDataGUI;
 
-public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
+public class ArrayGUI<T extends Icon> extends BaseDataGUI<T> {
 	
 	private List<T> icons;
 	
 	public ArrayGUI(int size, String title) {
-		super(size, title);
+		this(size, title, new RangeSpace(0, size));
+	}
+	
+	public ArrayGUI(int size, String title, Space dataIconsSpace) {
+		super(size, title, dataIconsSpace);
 		this.icons = new ArrayList<>();
+	}
+	
+	public ArrayGUI(int size, String title, List<T> icons) {
+		this(size, title);
+		this.icons.addAll(icons);
+	}
+	
+	public ArrayGUI(int size, String title, Space dataIconsSpace, List<T> icons) {
+		this(size, title, dataIconsSpace);
+		this.icons.addAll(icons);
 	}
 
 	@Override
-	public T getIconInSlot(int slot) {
-		return this.icons.get(slot);
+	public T getDataIconInSlot(int slot) {
+		Space dataIconsSpace = getDataIconsSpace();
+		if (dataIconsSpace.isAbsoluteSlotInSpace(slot)) {
+			int relativeSlot = dataIconsSpace.getRelativeSlot(slot);
+			if (relativeSlot < icons.size()) {
+				return icons.get(dataIconsSpace.getRelativeSlot(slot));
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public Icon getIconInSlot(int slot) {
+		return getDataIconInSlot(slot);
 	}
 	
 	public boolean addIcon(T icon) {
@@ -45,7 +71,7 @@ public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
 
 	@Override
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event) {
-		Icon icon = this.icons.get(slot);
+		Icon icon = getIconInSlot(slot);
 		if (icon == null) {
 			return false;
 		}
@@ -59,24 +85,16 @@ public class ArrayGUI<T extends Icon> extends BaseGUI<T> {
 	
 	@Override
 	public Inventory getInventory(Player player) {
-		Inventory inventory = super.getInventory(player);
-		for (Icon icon : this.icons) {
-			System.out.println(icon.getItemStack());
-		}
-		inventory.setContents(this.icons.stream().
-				map((Icon icon)->icon.getItemStack()).
-				collect(Collectors.toList()).
-				toArray(new ItemStack[this.icons.size()]));
-		System.out.println(inventory.getItem(0));
-		return inventory;
+		return getInventory();
 	}
 	
 	@Override
 	public Inventory getInventory() {
 		Inventory inventory = super.getInventory();
+		Space dataIconsSpace = getDataIconsSpace();
 		int index = 0;
 		for (Icon icon : this.icons) {
-			inventory.setItem(index, icon.getItemStack());
+			inventory.setItem(dataIconsSpace.getAbsoluteSlot(index), icon.getItemStack());
 			index++;
 		}
 		return inventory;

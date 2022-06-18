@@ -1,4 +1,4 @@
-package drguis.guis.types.decorators.general;
+package drguis.guis.types.decorators.data.general;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,25 +7,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import drguis.guis.GUI;
 import drguis.guis.icons.Icon;
 import drguis.guis.icons.actions.ClickAction;
-import drguis.guis.types.decorators.GUIDecorator;
+import drguis.guis.types.DataGUI;
+import drguis.guis.types.decorators.data.GUIDataDecorator;
 
-public class ArrayGUIDecorator<T extends Icon> extends GUIDecorator<T> {
+public class ArrayGUIDecorator<T extends Icon> extends GUIDataDecorator<T> {
 
 	private List<T> icons;
 	
-	public ArrayGUIDecorator(GUI<T> gui) {
+	public ArrayGUIDecorator(DataGUI<T> gui) {
 		super(gui);
 		this.icons = new ArrayList<>();
 	}
 	
 	@Override
-	public T getIconInSlot(int slot) {
+	public T getDataIconInSlot(int slot) {
 		T icon = this.icons.get(slot);
 		if (icon == null) {
-			icon = super.getIconInSlot(slot);
+			icon = super.getDataIconInSlot(slot);
 		}
 		return icon;
 	}
@@ -63,9 +63,6 @@ public class ArrayGUIDecorator<T extends Icon> extends GUIDecorator<T> {
 	@Override
 	public Inventory getInventory(Player player) {
 		Inventory inventory = super.getInventory(player);
-		for (Icon icon : this.icons) {
-			System.out.println(icon.getItemStack());
-		}
 		int iconIndex = 0;
 		for (Icon icon : this.icons) {
 			if (icon != null) {
@@ -73,7 +70,6 @@ public class ArrayGUIDecorator<T extends Icon> extends GUIDecorator<T> {
 			}
 			iconIndex++;
 		}
-		System.out.println(inventory.getItem(0));
 		return inventory;
 	}
 	

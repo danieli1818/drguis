@@ -1,4 +1,4 @@
-package drguis.guis.types.decorators.selection_gui;
+package drguis.guis.types.decorators.data.selection_gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,16 +12,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import drenchantments.enchantments.DREnchantmentsManager;
-import drguis.guis.GUI;
 import drguis.guis.effects.enchantments.Glow;
 import drguis.guis.icons.Icon;
-import drguis.guis.types.decorators.GUIDecorator;
+import drguis.guis.types.DataGUI;
+import drguis.guis.types.decorators.data.GUIDataDecorator;
 
-public class SelectionGUI<T extends Icon> extends GUIDecorator<T> implements SelectionGUII<T> {
+public class SelectionGUI<T extends Icon> extends GUIDataDecorator<T> implements SelectionGUII<T> {
 
 	private Map<Player, Integer> playerSelections;
 	
-	public SelectionGUI(GUI<T> gui) {
+	public SelectionGUI(DataGUI<T> gui) {
 		super(gui);
 		this.playerSelections = new HashMap<>();
 	}
@@ -64,7 +64,7 @@ public class SelectionGUI<T extends Icon> extends GUIDecorator<T> implements Sel
 	}
 	
 	private ItemStack getItemStackInSlot(int slot) {
-		Icon icon = getIconInSlot(slot);
+		Icon icon = getDataIconInSlot(slot);
 		if (icon != null) {
 			return icon.getItemStack();
 		}

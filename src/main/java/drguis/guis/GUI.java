@@ -7,9 +7,9 @@ import org.bukkit.inventory.InventoryHolder;
 
 import drguis.guis.icons.Icon;
 
-public interface GUI<T extends Icon> extends InventoryHolder {
+public interface GUI extends InventoryHolder {
 
-	public T getIconInSlot(int slot);
+	public Icon getIconInSlot(int slot);
 	
 	public boolean onClickOnSlot(Player player, int slot, InventoryClickEvent event);
 	

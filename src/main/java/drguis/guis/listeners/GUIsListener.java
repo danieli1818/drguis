@@ -12,13 +12,13 @@ public class GUIsListener implements Listener {
 	@EventHandler
 	public boolean onInventoryClickEvent(InventoryClickEvent event) {
 		if (event.getInventory().getHolder() instanceof GUI) {
-			onGUIClickEvent((GUI<?>)event.getInventory().getHolder(), (Player)event.getWhoClicked(), event.getSlot(), event);
+			onGUIClickEvent((GUI)event.getInventory().getHolder(), (Player)event.getWhoClicked(), event.getSlot(), event);
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean onGUIClickEvent(GUI<?> gui, Player player, int slot, InventoryClickEvent event) {
+	public boolean onGUIClickEvent(GUI gui, Player player, int slot, InventoryClickEvent event) {
 		return gui.onClickOnSlot(player, slot, event);
 	}
 	
