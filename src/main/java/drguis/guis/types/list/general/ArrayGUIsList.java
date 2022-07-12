@@ -183,5 +183,9 @@ public class ArrayGUIsList<T extends Icon> extends BaseGUIsList<T> {
 	public boolean removeIcon(T icon) {
 		return icons.remove(icon);
 	}
+	
+	public void removeAllIcons() {
+		icons.clear();
+	}
 
 }

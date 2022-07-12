@@ -166,5 +166,9 @@ public class MapGUIsList<T extends Icon> extends BaseGUIsList<T> {
 			}
 		});
 	}
+	
+	public void removeAllIcons() {
+		icons.clear();
+	}
 
 }
