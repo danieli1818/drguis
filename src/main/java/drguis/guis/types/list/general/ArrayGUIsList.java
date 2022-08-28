@@ -80,6 +80,10 @@ public class ArrayGUIsList<T extends Icon> extends BaseGUIsList<T> {
 
 	@Override
 	public Inventory getInventory() {
+		GUI gui = getGUIInIndex(0);
+		if (gui == null) {
+			return new ArrayGUI<>(getGUISize(), getTitle()).getInventory();
+		}
 		return getGUIInIndex(0).getInventory();
 	}
 	
@@ -105,7 +109,7 @@ public class ArrayGUIsList<T extends Icon> extends BaseGUIsList<T> {
 		return getDataIcons();
 	}
 	
-	private GUI getGUIInIndex(int guiIndex) {
+	public GUI getGUIInIndex(int guiIndex) {
 		if (!doesGUIExist(guiIndex)) {
 			return null;
 		}

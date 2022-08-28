@@ -3,6 +3,7 @@ package drguis.guis.icons.types;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.guis.icons.BaseIcon;
+import drguis.guis.icons.actions.ClickAction;
 
 public class PermissionIcon extends BaseIcon {
 
@@ -15,6 +16,11 @@ public class PermissionIcon extends BaseIcon {
 	
 	public String getPermission() {
 		return this.permission;
+	}
+	
+	@Override
+	public PermissionIcon addClickAction(ClickAction clickAction) {
+		return (PermissionIcon)super.addClickAction(clickAction);
 	}
 
 }

@@ -7,13 +7,13 @@ import drguis.guis.icons.types.PermissionIcon;
 import drguis.guis.types.DataGUI;
 import drguis.guis.types.decorators.data.GUIDataDecorator;
 
-public class PermissionGUI<T extends PermissionIcon> extends GUIDataDecorator<T> {
+public class PermissionsGUIDecorator<T extends PermissionIcon> extends GUIDataDecorator<T> {
 
-	private String nonPermissionMessage;
+	private String noPermissionMessage;
 	
-	public PermissionGUI(DataGUI<T> gui, String nonPermissionMessage) {
+	public PermissionsGUIDecorator(DataGUI<T> gui, String noPermissionMessage) {
 		super(gui);
-		this.nonPermissionMessage = nonPermissionMessage;
+		this.noPermissionMessage = noPermissionMessage;
 	}
 	
 	@Override
@@ -27,8 +27,8 @@ public class PermissionGUI<T extends PermissionIcon> extends GUIDataDecorator<T>
 			return super.onClickOnSlot(player, slot, event);
 		}
 		if (!player.hasPermission(permission)) {
-			if (nonPermissionMessage != null) {
-				player.sendMessage(nonPermissionMessage);
+			if (noPermissionMessage != null) {
+				player.sendMessage(noPermissionMessage);
 			}
 			return false;
 		}

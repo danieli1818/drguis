@@ -10,6 +10,7 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorator
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\common\MatrixSlotData.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\utils\SchedulerUtils.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\icons\Icon.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\permissions\PermissionsGUIDecorator.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\list\general\ArrayGUIsList.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\icons\types\PermissionIcon.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\general\ArrayGUIDecorator.java
@@ -28,5 +29,6 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\common\IndexSlo
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\GUIDataDecorator.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\utils\CollectionsUtils.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\selection_gui\SelectionGUII.java
-C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\permissions\PermissionGUI.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\list\permissions\PermissionsGUIsListDecorator.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\guis\types\decorators\data\list\GUIsListDataDecorator.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\DRGuis.java

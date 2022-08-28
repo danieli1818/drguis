@@ -110,7 +110,7 @@ public class MapGUIsList<T extends Icon> extends BaseGUIsList<T> {
 				.collect(Collectors.toMap((Map.Entry<Integer, T> entry) -> entry.getKey(), (Map.Entry<Integer, T> entry) -> entry.getValue()));
 	}
 	
-	private GUI getGUIInIndex(int guiIndex) {
+	public GUI getGUIInIndex(int guiIndex) {
 		if (!doesGUIExist(guiIndex)) {
 			return null;
 		}

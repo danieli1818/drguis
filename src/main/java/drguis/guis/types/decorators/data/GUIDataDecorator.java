@@ -19,7 +19,10 @@ public abstract class GUIDataDecorator<T extends Icon> implements DataGUI<T> {
 	
 	@Override
 	public Inventory getInventory() {
-		return gui.getInventory();
+		Inventory inventory = gui.getInventory();
+		Inventory decoratedInventory = Bukkit.createInventory(this, inventory.getSize(), inventory.getTitle());
+		decoratedInventory.setContents(inventory.getContents());
+		return decoratedInventory;
 	}
 
 	@Override
@@ -34,7 +37,7 @@ public abstract class GUIDataDecorator<T extends Icon> implements DataGUI<T> {
 
 	@Override
 	public Inventory getInventory(Player player) {
-		Inventory inventory = gui.getInventory();
+		Inventory inventory = gui.getInventory(player);
 		Inventory decoratedInventory = Bukkit.createInventory(this, inventory.getSize(), inventory.getTitle());
 		decoratedInventory.setContents(inventory.getContents());
 		return decoratedInventory;

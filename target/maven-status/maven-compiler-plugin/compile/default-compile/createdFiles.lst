@@ -2,6 +2,7 @@ drguis\guis\icons\spaces\Space.class
 drguis\guis\types\decorators\data\general\MapGUIDecorator.class
 drguis\guis\types\decorators\general\basic\MapGUIDecorator.class
 drguis\guis\common\IndexSlotData.class
+drguis\guis\types\decorators\data\list\permissions\PermissionsGUIsListDecorator.class
 drguis\guis\icons\Icon.class
 drguis\guis\icons\spaces\RangeSpace$RangeSpaceIterator.class
 drguis\guis\icons\spaces\RangeSpace.class
@@ -11,7 +12,6 @@ drguis\guis\icons\BaseIcon.class
 drguis\guis\types\DataGUI.class
 drguis\guis\types\decorators\data\tranformers\GUIDecoratorDataTransformer.class
 drguis\guis\common\SlotData.class
-drguis\guis\types\decorators\data\permissions\PermissionGUI.class
 drguis\guis\types\list\BaseGUIsList.class
 drguis\guis\common\MatrixSlotData.class
 drguis\guis\types\decorators\general\GUIDecorator.class
@@ -23,9 +23,11 @@ drguis\guis\types\decorators\data\general\ArrayGUIDecorator.class
 drguis\guis\types\list\GUIsList.class
 drguis\utils\CollectionsUtils.class
 drguis\guis\types\general\MapGUI.class
+drguis\guis\types\decorators\data\list\GUIsListDataDecorator.class
 drguis\guis\types\list\general\MapGUIsList.class
 drguis\guis\GUI.class
 drguis\guis\effects\enchantments\Glow.class
+drguis\guis\types\decorators\data\permissions\PermissionsGUIDecorator.class
 drguis\utils\SchedulerUtils.class
 drguis\guis\types\general\ArrayGUI.class
 drguis\guis\types\decorators\data\selection_gui\SelectionGUI.class
