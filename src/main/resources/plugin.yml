@@ -3,3 +3,14 @@ version: ${project.version}
 main: drguis.DRGuis
 authors: [DanielRottner]
 description: DRGuis Plugin For Custom GUIs.
+depend: [DRLibs]
+softdepend: [DREnchantments]
+commands:
+    drguis:
+        description: DRGuis commands
+        aliases:
+        - guis
+        - gui
+        permission: drguis.use
+        permission-message: You do not have permission!
+        usage: /<command>

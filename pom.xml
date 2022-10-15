@@ -27,6 +27,13 @@
       <version>0.0.1</version>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>me.danieli1818</groupId>
+      <artifactId>drlibs</artifactId>
+      <version>0.0.1</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   
   <build>

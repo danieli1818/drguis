@@ -1,0 +1,5 @@
+no_permission_message: "You don't have permission to run this command!"
+player_command_message: "You must be a player to run this command!"
+error_page_index_out_of_bounds: "The requested help page doesn't exist!"
+successfully_reloaded_configurations_message: "Successfully reloaded plugin's configurations!"
+player_not_found_message: "Couldn't find this player!"

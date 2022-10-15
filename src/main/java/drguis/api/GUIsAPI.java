@@ -2,12 +2,12 @@ package drguis.api;
 
 import org.bukkit.entity.Player;
 
-import drguis.guis.GUIPage;
+import drguis.views.GUIView;
 
 public class GUIsAPI {
 
-	public static void showGUIToPlayer(Player player, GUIPage guiPage) {
-		player.openInventory(guiPage.getInventory(player));
+	public static void showGUIToPlayer(Player player, GUIView gui) {
+		player.openInventory(gui.getInventory());
 	}
 	
 }
