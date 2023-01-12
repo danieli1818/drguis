@@ -29,4 +29,6 @@ public interface GUIView extends InventoryHolder {
 	
 	public GUIView clearIcons();
 	
+	public GUIView cloneView();
+	
 }

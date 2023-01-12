@@ -51,15 +51,16 @@ public class SeriesRegion implements Region {
 		
 		@Override
 		public boolean hasNext() {
-			return currentIndex + 1 < seriesRegion.getLength();
+			return currentIndex + 1 <= seriesRegion.getLength();
 		}
 
 		@Override
 		public Integer next() {
 			if (hasNext()) {
+				int returnValue = currentValue;
 				currentIndex++;
 				currentValue += seriesRegion.getIncrementor();
-				return currentValue;
+				return returnValue;
 			}
 			return null;
 		}

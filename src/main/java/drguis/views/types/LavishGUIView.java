@@ -63,6 +63,11 @@ public class LavishGUIView extends BaseGUIView implements GUIView {
 		return this;
 	}
 	
+	private LavishGUIView setIcons(Icon[] icons) {
+		this.icons = icons.clone();
+		return this;
+	}
+	
 	private boolean isValidIconIndex(Integer iconIndex) {
 		if (iconIndex == null) {
 			return false;
@@ -82,6 +87,11 @@ public class LavishGUIView extends BaseGUIView implements GUIView {
 			icons[i] = null;
 		}
 		return this;
+	}
+
+	@Override
+	public GUIView cloneView() {
+		return new LavishGUIView(getGUIHolder(), getSize(), getTitle()).setIcons(icons);
 	}
 
 }

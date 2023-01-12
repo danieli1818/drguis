@@ -49,6 +49,9 @@ public class SparseGUIView extends BaseGUIView implements GUIView {
 	}
 	
 	public Icon setIcon(int index, Icon icon) {
+		if (icon == null) {
+			return icons.remove(index);
+		}
 		return icons.put(index, icon);
 	}
 	
@@ -70,6 +73,11 @@ public class SparseGUIView extends BaseGUIView implements GUIView {
 	public SparseGUIView clearIcons() {
 		icons.clear();
 		return this;
+	}
+
+	@Override
+	public GUIView cloneView() {
+		return new SparseGUIView(getGUIHolder(), getSize(), getTitle()).setIcons(icons);
 	}
 	
 }

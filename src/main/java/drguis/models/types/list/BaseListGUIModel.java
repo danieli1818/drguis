@@ -5,16 +5,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
+import drguis.common.CloseReason;
+import drguis.common.events.GUIRelation;
 import drguis.models.utils.IconsFunctionsUtils;
+import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
 import drguis.views.common.Icon;
 import drguis.views.common.actions.ConsumerAction;
 import drguis.views.common.events.IconClickEvent;
+import drguis.views.common.events.PlayerInventoryClickEvent;
 import drguis.views.common.icons.properties.SimpleIconProperties;
 import drguis.views.common.icons.types.ActionsIcon;
 import drguis.views.common.icons.utils.IconMetadata;
 import drguis.views.types.LavishGUIView;
 import drguis.views.types.SparseGUIView;
+import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
+import drlibs.items.ItemStackBuilder;
 
 public abstract class BaseListGUIModel implements ListGUIModel {
 
@@ -76,6 +84,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	}
 
 	private Icon getPrevIcon(Player player, int currentPageIndex) {
+		System.out.println("Getting Prev Icon: " + currentPageIndex);
 		if (prevIconMetadata == null || currentPageIndex == 0) {
 			return null;
 		}
@@ -86,7 +95,8 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	}
 
 	private Icon getNextIcon(Player player, int currentPageIndex) {
-		if (prevIconMetadata == null || currentPageIndex + 1 == getNumOfPages(player)) {
+		System.out.println("Getting Next Icon: " + currentPageIndex + ", " + getNumOfPages(player));
+		if (prevIconMetadata == null || currentPageIndex + 1 >= getNumOfPages(player)) {
 			return null;
 		}
 		return new ActionsIcon(nextIconMetadata.getItemStack(), new SimpleIconProperties())
@@ -100,12 +110,43 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		IconsFunctionsUtils.defaultOnIconClickEvent(event);
 	}
 
+	@Override
+	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {
+	}
+
+	@Override
+	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
+	}
+
+	@Override
+	public void onMoveItemToOtherInventoryEvent(MoveItemToOtherInventoryEvent event, GUIRelation relation) {
+	}
+
+	@Override
+	public void onSlotSwapEvent(ItemSlotSwapEvent event) {
+	}
+
+	@Override
+	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
+		GUIsUtils.defaultOnGUICloseEvent(guiView, closeReason, player);
+	}
+
 	public String getTitle() {
 		return title;
 	}
 
 	public int getGuiPageSize() {
 		return guiPageSize;
+	}
+
+	public static ItemStack getDefaultPrevItemStack() {
+		return new ItemStackBuilder(Material.ARROW).setDisplayName("Previous Page")
+				.setLoreString("Click to return to the previous page").build();
+	}
+
+	public static ItemStack getDefaultNextItemStack() {
+		return new ItemStackBuilder(Material.ARROW).setDisplayName("Next Page")
+				.setLoreString("Click to go to the next page").build();
 	}
 
 }

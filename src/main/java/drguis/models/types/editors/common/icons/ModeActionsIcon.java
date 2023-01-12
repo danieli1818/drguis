@@ -60,7 +60,7 @@ public class ModeActionsIcon implements Icon {
 			currentGUIModeIndex++;
 			currentGUIModeIndex %= modes.size();
 			mode = modes.get(currentGUIModeIndex);
-		} while (mode == null);
+		} while (getIcon() == null);
 	}
 	
 	@Override
@@ -70,6 +70,7 @@ public class ModeActionsIcon implements Icon {
 
 	@Override
 	public boolean cancelClickEvent() {
+		System.out.println("Mode Icon: " + getIcon());
 		return getIcon().cancelClickEvent();
 	}
 

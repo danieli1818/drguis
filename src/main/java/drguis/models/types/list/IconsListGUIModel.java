@@ -2,6 +2,7 @@ package drguis.models.types.list;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,6 +55,13 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 		icons.add(icon);
 		return this;
 	}
+	
+	public IconsListGUIModel addIcons(Set<Icon> icons) {
+		for (Icon icon : icons) {
+			this.icons.add(icon);
+		}
+		return this;
+	}
 
 	public IconsListGUIModel removeIcon(Icon icon) {
 		icons.remove(icon);
@@ -90,7 +98,8 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 
 	@Override
 	public int getNumOfPages(Player player) {
-		return getIcons().size() / getRegion().getSize();
+		System.out.println("Yay in getNumOfPages: " + getIcons().size() + ", " + getRegion().getSize());
+		return (int) Math.ceil(((double) getIcons().size()) / getRegion().getSize());
 	}
 
 }

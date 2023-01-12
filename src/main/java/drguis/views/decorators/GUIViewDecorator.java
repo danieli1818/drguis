@@ -75,5 +75,10 @@ public abstract class GUIViewDecorator implements GUIView {
 	public GUIView clearIcons() {
 		return guiView.clearIcons();
 	}
+	
+	@Override
+	public GUIView cloneView() {
+		return guiView.cloneView();
+	}
 
 }

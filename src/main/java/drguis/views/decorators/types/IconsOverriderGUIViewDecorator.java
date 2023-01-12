@@ -64,4 +64,9 @@ public class IconsOverriderGUIViewDecorator extends GUIViewDecorator {
 		return this;
 	}
 	
+	@Override
+	public GUIView cloneView() {
+		return new IconsOverriderGUIViewDecorator(super.cloneView()).setIcons(icons);
+	}
+	
 }
