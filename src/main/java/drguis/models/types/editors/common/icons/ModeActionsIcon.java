@@ -8,11 +8,11 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import drguis.common.Action;
+import drguis.common.Icon;
+import drguis.common.actions.ConsumerAction;
+import drguis.common.icons.IconProperties;
 import drguis.models.types.editors.common.GUIMode;
-import drguis.views.common.Action;
-import drguis.views.common.Icon;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.icons.IconProperties;
 
 public class ModeActionsIcon implements Icon {
 

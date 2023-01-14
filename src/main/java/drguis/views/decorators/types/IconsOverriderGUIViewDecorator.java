@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.bukkit.inventory.Inventory;
 
-import drguis.views.common.Icon;
 import drguis.views.decorators.GUIViewDecorator;
+import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.utils.Functions;
 import drguis.views.GUIView;
@@ -39,6 +39,13 @@ public class IconsOverriderGUIViewDecorator extends GUIViewDecorator {
 			return icons.get(index);
 		}
 		return super.getIcon(index);
+	}
+	
+	@Override
+	public Map<Integer, Icon> getIcons() {
+		Map<Integer, Icon> icons = super.getIcons();
+		icons.putAll(this.icons);
+		return icons;
 	}
 	
 	@Override

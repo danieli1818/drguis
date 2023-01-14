@@ -1,4 +1,4 @@
-package drguis.views.common;
+package drguis.common;
 
 import java.util.function.Consumer;
 

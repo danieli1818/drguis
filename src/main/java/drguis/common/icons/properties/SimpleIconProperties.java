@@ -1,9 +1,9 @@
-package drguis.views.common.icons.properties;
+package drguis.common.icons.properties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import drguis.views.common.icons.IconProperties;
+import drguis.common.icons.IconProperties;
 
 public class SimpleIconProperties implements IconProperties {
 

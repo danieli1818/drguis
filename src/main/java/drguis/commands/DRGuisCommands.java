@@ -1,5 +1,7 @@
 package drguis.commands;
 
+import java.io.IOException;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -7,18 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
+import drguis.common.icons.types.SimpleIcon;
 import drguis.messages.MessagesIDs;
-import drguis.models.types.SimpleGUIModel;
+import drguis.models.types.editors.GUIEditor;
 import drguis.models.types.editors.SimpleGUIEditor;
-import drguis.models.types.list.GUIModelsListGUIModel;
-import drguis.models.types.list.IconsListGUIModel;
 import drguis.views.GUIView;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.icons.types.ActionIcon;
-import drguis.views.common.icons.types.SimpleIcon;
-import drguis.views.types.SparseGUIView;
 import drlibs.common.commands.RootCommand;
+import drlibs.common.files.FileConfigurationsUtils;
 import drlibs.common.plugin.MessagesPlugin;
+import drlibs.utils.functions.ItemsUtils;
 
 public class DRGuisCommands extends RootCommand {
 
@@ -73,6 +72,60 @@ public class DRGuisCommands extends RootCommand {
 			}
 			isEditor = !isEditor;
 			
+			FileConfigurationsUtils fcu = getPlugin().getFileConfigurationsUtils();
+			fcu.loadFileConfiguration("output.yml");
+			if (fcu.hasKey("output.yml", "ItemStack")) {
+				try {
+					System.out.println(ItemsUtils.fromString(fcu.getString("output.yml", "ItemStack")));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				fcu.setObject("output.yml", "ItemStack", ItemsUtils.toString(new ItemStack(Material.APPLE)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (fcu.hasKey("output.yml", "SimpleIcon")) {
+				try {
+					System.out.println(fcu.getSerializable("output.yml", "SimpleIcon"));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				fcu.setSerializable("output.yml", "SimpleIcon", new SimpleIcon(new ItemStack(Material.APPLE), true));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (fcu.hasKey("output.yml", "gui")) {
+				try {
+					System.out.println(fcu.getSerializable("output.yml", "gui"));
+					GUIsAPI.showGUIToPlayer(player, ((GUIEditor) fcu.getSerializable("output.yml", "gui")).getGUI(player));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+//			try {
+//				fcu.setSerializable("output.yml", "gui", editor);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+			if (fcu.hasKey("output.yml", "gui1")) {
+				try {
+					System.out.println(fcu.getSerializable("output.yml", "gui1"));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				fcu.setSerializable("output.yml", "gui1", editor);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			fcu.save("output.yml");
 			
 		}
 		return true;

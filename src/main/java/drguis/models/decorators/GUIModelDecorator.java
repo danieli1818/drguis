@@ -2,13 +2,13 @@ package drguis.models.decorators;
 
 import org.bukkit.entity.Player;
 
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
 import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drguis.common.CloseReason;
 import drguis.common.events.GUIRelation;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.models.GUIModel;
 import drguis.views.GUIView;
 

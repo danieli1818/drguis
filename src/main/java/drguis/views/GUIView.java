@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.bukkit.inventory.InventoryHolder;
 
-import drguis.views.common.Icon;
+import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
 
@@ -20,6 +20,8 @@ public interface GUIView extends InventoryHolder {
 	public GUIView setGUIHolder(GUIModel guiModel);
 	
 	public Icon getIcon(int index);
+	
+	public Map<Integer, Icon> getIcons();
 	
 	public Icon setIcon(int index, Icon icon);
 	

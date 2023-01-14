@@ -1,11 +1,12 @@
 package drguis.views.types;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.inventory.Inventory;
 
-import drguis.views.common.Icon;
+import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
 import drguis.utils.Functions;
@@ -92,6 +93,18 @@ public class LavishGUIView extends BaseGUIView implements GUIView {
 	@Override
 	public GUIView cloneView() {
 		return new LavishGUIView(getGUIHolder(), getSize(), getTitle()).setIcons(icons);
+	}
+
+	@Override
+	public Map<Integer, Icon> getIcons() {
+		Map<Integer, Icon> icons = new HashMap<>();
+		for (int i = 0; i < this.icons.length; i++) {
+			Icon icon = this.icons[i];
+			if (icon != null) {
+				icons.put(i, icon);
+			}
+		}
+		return null;
 	}
 
 }

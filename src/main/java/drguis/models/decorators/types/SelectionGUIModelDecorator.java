@@ -5,11 +5,11 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 
-import drguis.views.common.Icon;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.icons.types.ActionsIcon;
 import drguis.views.decorators.types.IconsOverriderGUIViewDecorator;
+import drguis.common.Icon;
+import drguis.common.actions.ConsumerAction;
+import drguis.common.events.IconClickEvent;
+import drguis.common.icons.types.ActionsIcon;
 import drguis.models.GUIModel;
 import drguis.models.decorators.GUIModelDecorator;
 import drguis.views.GUIView;

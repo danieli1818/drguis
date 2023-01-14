@@ -1,4 +1,4 @@
-package drguis.views.common.icons;
+package drguis.common.icons;
 
 public interface IconProperties {
 

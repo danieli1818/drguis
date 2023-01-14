@@ -1,5 +1,9 @@
 package drguis.models.types.editors;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -8,7 +12,14 @@ import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
 import drguis.common.CloseReason;
+import drguis.common.Icon;
 import drguis.common.events.GUIRelation;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
+import drguis.common.icons.SerializableIcon;
+import drguis.common.icons.properties.SimpleIconProperties;
+import drguis.common.icons.types.ActionsIcon;
+import drguis.common.icons.types.SimpleIcon;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
 import drguis.models.types.SimpleGUIModel;
@@ -19,22 +30,25 @@ import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
-import drguis.views.common.Icon;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
-import drguis.views.common.icons.types.ActionsIcon;
-import drguis.views.common.icons.types.SimpleIcon;
 import drguis.views.types.SparseGUIView;
 import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
+import drlibs.items.ItemStackBuilder;
 
 public class SimpleGUIEditor implements GUIEditor {
 
-	private GUIView editorGuiView;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3792701767797637700L;
 
-	private ModeActionsIcon modeIcon;
-	
+	private static final String shouldSerializeIconPropertyID = "should_serialize";
+
+	private transient GUIView editorGuiView;
+
+	private transient ModeActionsIcon modeIcon;
+
 	private int pageSize;
 
 	public SimpleGUIEditor(int pageSize, String title) {
@@ -45,16 +59,35 @@ public class SimpleGUIEditor implements GUIEditor {
 			editorPageSize += 9;
 		}
 		editorGuiView = new SparseGUIView(this, editorPageSize, title);
-		modeIcon = new ModeActionsIcon();
-		modeIcon.setIcon(GUIMode.NORMAL, new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
-		modeIcon.setIcon(GUIMode.EDIT, new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true)); // REMOVE
-		editorGuiView.setIcon(editorPageSize - 9, modeIcon);
-		Icon nullIcon = new SimpleIcon(new ItemStack(Material.STAINED_GLASS), true);
+		initializeGUI(editorPageSize);
+	}
+
+	private void initializeGUI(int editorPageSize) {
+		initializeModeIcon(editorPageSize);
+		SimpleIconProperties iconProperties = new SimpleIconProperties();
+		iconProperties.setBoolean(shouldSerializeIconPropertyID, false);
+		Icon nullIcon = new SimpleIcon(new ItemStack(Material.STAINED_GLASS), iconProperties);
 		for (int i = pageSize; i < editorPageSize; i++) {
 			if (editorGuiView.getIcon(i) == null) {
 				editorGuiView.setIcon(i, nullIcon);
 			}
 		}
+	}
+
+	private void initializeModeIcon(int editorPageSize) {
+		modeIcon = new ModeActionsIcon();
+		SimpleIconProperties iconProperties = new SimpleIconProperties();
+		iconProperties.setBoolean(shouldSerializeIconPropertyID, false);
+		SimpleIcon normalModeIcon = new SimpleIcon(
+				new ItemStackBuilder(Material.DIAMOND_PICKAXE).setDisplayName("Normal Editing Mode")
+						.setLoreString("Drag and drop items on the GUI to edit it").build(),
+				iconProperties);
+		SimpleIcon innerEditModeIcon = new SimpleIcon(new ItemStackBuilder(Material.DIAMOND_SWORD)
+				.setDisplayName("Inner Editing Mode").setLoreString("Click on an icon to edit it").build(),
+				iconProperties);
+		modeIcon.setIcon(GUIMode.NORMAL, normalModeIcon);
+		modeIcon.setIcon(GUIMode.EDIT, innerEditModeIcon);
+		editorGuiView.setIcon(editorPageSize - 9, modeIcon);
 	}
 
 	@Override
@@ -168,11 +201,46 @@ public class SimpleGUIEditor implements GUIEditor {
 	}
 
 	@Override
-	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {}
-	
+	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {
+	}
+
 	@Override
 	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
 		GUIsUtils.defaultOnGUICloseEvent(guiView, closeReason, player);
+	}
+
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(editorGuiView.getSize());
+		oos.writeObject(editorGuiView.getTitle());
+		oos.writeObject(getIconsToSerialize());
+	}
+
+	private Map<Integer, SerializableIcon> getIconsToSerialize() {
+		Map<Integer, SerializableIcon> iconsToSerialize = new HashMap<>();
+		Map<Integer, Icon> icons = editorGuiView.getIcons();
+		for (Map.Entry<Integer, Icon> iconEntry : icons.entrySet()) {
+			Icon icon = iconEntry.getValue();
+			if (icon == null || !(icon instanceof SerializableIcon) || (icon.getProperties() != null
+					&& icon.getProperties().getBoolean(shouldSerializeIconPropertyID) == false)) {
+				continue;
+			}
+			iconsToSerialize.put(iconEntry.getKey(), (SerializableIcon) icon);
+		}
+		return iconsToSerialize;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		int editorPageSize = ois.readInt();
+		String title = (String) ois.readObject();
+		Map<Integer, SerializableIcon> icons = (Map<Integer, SerializableIcon>) ois.readObject();
+		editorGuiView = new SparseGUIView(this, editorPageSize, title);
+		for (Map.Entry<Integer, SerializableIcon> iconEntry : icons.entrySet()) {
+			editorGuiView.setIcon(iconEntry.getKey(), iconEntry.getValue());
+		}
+		initializeGUI(editorPageSize);
 	}
 
 }

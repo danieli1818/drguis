@@ -1,4 +1,4 @@
-package drguis.views.common.icons.utils;
+package drguis.common.icons.utils;
 
 import org.bukkit.inventory.ItemStack;
 

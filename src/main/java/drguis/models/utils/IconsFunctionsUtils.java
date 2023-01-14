@@ -1,8 +1,8 @@
 package drguis.models.utils;
 
-import drguis.views.common.Action;
-import drguis.views.common.Icon;
-import drguis.views.common.events.IconClickEvent;
+import drguis.common.Action;
+import drguis.common.Icon;
+import drguis.common.events.IconClickEvent;
 
 public class IconsFunctionsUtils {
 

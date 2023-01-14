@@ -8,12 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import drguis.common.Icon;
 import drguis.common.Region;
+import drguis.common.icons.utils.IconMetadata;
 import drguis.common.regions.SeriesRegion;
 import drguis.models.GUIModel;
 import drguis.views.GUIView;
-import drguis.views.common.Icon;
-import drguis.views.common.icons.utils.IconMetadata;
 
 public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 
@@ -98,7 +98,6 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 
 	@Override
 	public int getNumOfPages(Player player) {
-		System.out.println("Yay in getNumOfPages: " + getIcons().size() + ", " + getRegion().getSize());
 		return (int) Math.ceil(((double) getIcons().size()) / getRegion().getSize());
 	}
 

@@ -50,11 +50,16 @@ public class GUIsManager {
 			return false;
 		}
 		for (String key : fcu.getKeys(filePath)) {
-			Serializable serializable = fcu.getSerializable(filePath, key);
-			if (serializable == null || !(serializable instanceof GUIEditor)) {
-				continue;
+			Serializable serializable;
+			try {
+				serializable = fcu.getSerializable(filePath, key);
+				if (serializable == null || !(serializable instanceof GUIEditor)) {
+					continue;
+				}
+				guis.put(key, (GUIEditor) serializable);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
-			guis.put(key, (GUIEditor) serializable);
 		}
 		return true;
 	}

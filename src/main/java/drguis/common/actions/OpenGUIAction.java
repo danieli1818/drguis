@@ -1,4 +1,4 @@
-package drguis.views.common.actions;
+package drguis.common.actions;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,12 +8,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.google.common.base.Function;
 
 import drguis.api.GUIsAPI;
+import drguis.common.Action;
 import drguis.common.CloseReason;
+import drguis.common.Icon;
+import drguis.common.icons.types.SimpleIcon;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.views.GUIView;
-import drguis.views.common.Action;
-import drguis.views.common.Icon;
-import drguis.views.common.icons.types.SimpleIcon;
 
 public class OpenGUIAction implements Action {
 

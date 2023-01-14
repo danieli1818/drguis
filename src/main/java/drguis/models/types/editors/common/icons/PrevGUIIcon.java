@@ -7,11 +7,16 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import drguis.common.actions.ConsumerAction;
+import drguis.common.icons.types.ActionIcon;
 import drguis.utils.GUIsUtils;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.icons.types.ActionIcon;
 
 public class PrevGUIIcon extends ActionIcon {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6330932576497328445L;
 
 	public PrevGUIIcon() {
 		this(getDefaultItemStack());

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
-import drguis.views.common.Icon;
+import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
 import drguis.views.GUIView;
@@ -54,6 +54,11 @@ public abstract class GUIViewDecorator implements GUIView {
 	@Override
 	public Icon getIcon(int index) {
 		return guiView.getIcon(index);
+	}
+	
+	@Override
+	public Map<Integer, Icon> getIcons() {
+		return guiView.getIcons();
 	}
 
 	@Override

@@ -7,9 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryHolder;
 
-import drguis.views.common.Icon;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
+import drguis.common.Icon;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.views.GUIView;
 
 public class IconsListener implements Listener {

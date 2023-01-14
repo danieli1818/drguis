@@ -4,6 +4,10 @@ import org.bukkit.entity.Player;
 
 import drguis.common.CloseReason;
 import drguis.common.events.GUIRelation;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
+import drguis.common.icons.types.ActionsIcon;
+import drguis.common.icons.utils.IconMetadata;
 import drguis.common.regions.ListRegion;
 import drguis.management.ActionsManager;
 import drguis.management.GUIsStack;
@@ -13,10 +17,6 @@ import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
-import drguis.views.common.icons.types.ActionsIcon;
-import drguis.views.common.icons.utils.IconMetadata;
 import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
@@ -27,7 +27,7 @@ public class AddActionMenuEditor extends IconsListGUIModel implements GUIModel {
 
 	public AddActionMenuEditor(ActionsIcon icon) {
 		super(new ListRegion(10, 12, 14, 16, 28, 30, 32, 34), "Add Action Editor", 45,
-				new IconMetadata(getDefaultPrevItemStack(), 38), new IconMetadata(getDefaultNextItemStack(), 44));
+				new IconMetadata(getDefaultPrevItemStack(), 37), new IconMetadata(getDefaultNextItemStack(), 44));
 		this.icon = icon;
 		addIcons(ActionsManager.getInstance().getIcons(this.icon));
 	}
@@ -37,7 +37,7 @@ public class AddActionMenuEditor extends IconsListGUIModel implements GUIModel {
 		GUIView guiView = super.getGUIPage(player, pageIndex);
 		guiView.setIcon(4, icon);
 		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
-			guiView.setIcon(28, new PrevGUIIcon());
+			guiView.setIcon(36, new PrevGUIIcon());
 		}
 		return guiView;
 	}

@@ -7,7 +7,7 @@ import java.util.Map;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import drguis.views.common.Icon;
+import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
 import drguis.utils.Functions;
@@ -78,6 +78,11 @@ public class SparseGUIView extends BaseGUIView implements GUIView {
 	@Override
 	public GUIView cloneView() {
 		return new SparseGUIView(getGUIHolder(), getSize(), getTitle()).setIcons(icons);
+	}
+
+	@Override
+	public Map<Integer, Icon> getIcons() {
+		return icons;
 	}
 	
 }

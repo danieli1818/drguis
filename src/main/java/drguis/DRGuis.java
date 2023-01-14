@@ -5,13 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import drguis.commands.DRGuisCommands;
+import drguis.common.icons.types.ActionsIcon;
 import drguis.listeners.GUIsModelsListener;
 import drguis.listeners.IconsListener;
 import drguis.management.ActionsManager;
 import drguis.management.GUIsManager;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.types.editors.common.guis.actions.CommandActionEditor;
-import drguis.views.common.icons.types.ActionsIcon;
 import drlibs.common.files.FileConfigurationsLoader;
 import drlibs.common.files.FileConfigurationsUtils;
 import drlibs.common.plugin.MessagesPlugin;
@@ -48,6 +48,8 @@ public class DRGuis extends JavaPlugin implements MessagesPlugin {
 		fileConfigurationsUtils = new FileConfigurationsUtils(new FileConfigurationsLoader(this));
 		
 		initializeManagers();
+		
+		registerActionsIcons();
 
 		Bukkit.getPluginCommand("drguis").setExecutor(new DRGuisCommands(this));
 

@@ -5,7 +5,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
+import drguis.common.Action;
 import drguis.common.CloseReason;
+import drguis.common.Icon;
+import drguis.common.actions.OpenGUIAction;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
+import drguis.common.icons.types.ActionsIcon;
+import drguis.common.icons.types.SimpleIcon;
+import drguis.common.icons.utils.IconMetadata;
 import drguis.common.regions.SeriesRegion;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
@@ -16,14 +24,6 @@ import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
-import drguis.views.common.Action;
-import drguis.views.common.Icon;
-import drguis.views.common.actions.OpenGUIAction;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
-import drguis.views.common.icons.types.ActionsIcon;
-import drguis.views.common.icons.types.SimpleIcon;
-import drguis.views.common.icons.utils.IconMetadata;
 
 public class ActionsIconEditor extends IconsListGUIModel implements GUIModel {
 

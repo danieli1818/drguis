@@ -16,7 +16,7 @@ public class ListRegion implements Region {
 	
 	public ListRegion(int... regionList) {
 		this.regionList = new ArrayList<>();
-		for (int num = 0; num < regionList.length; num++) {
+		for (int num : regionList) {
 			this.regionList.add(num);
 		}
 	}

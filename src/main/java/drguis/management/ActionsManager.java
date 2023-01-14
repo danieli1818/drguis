@@ -9,12 +9,12 @@ import java.util.function.Function;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import drguis.common.Icon;
+import drguis.common.actions.ConsumerAction;
+import drguis.common.icons.types.ActionIcon;
+import drguis.common.icons.types.ActionsIcon;
 import drguis.models.GUIModel;
 import drguis.utils.GUIsUtils;
-import drguis.views.common.Icon;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.icons.types.ActionIcon;
-import drguis.views.common.icons.types.ActionsIcon;
 
 public class ActionsManager {
 

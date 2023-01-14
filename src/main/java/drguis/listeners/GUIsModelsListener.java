@@ -10,11 +10,11 @@ import org.bukkit.inventory.InventoryHolder;
 
 import drguis.common.CloseReason;
 import drguis.common.events.GUIRelation;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.GUIModel;
 import drguis.views.GUIView;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
 import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
@@ -87,7 +87,6 @@ public class GUIsModelsListener implements Listener {
 	
 	@EventHandler
 	public void onInventoryCloseEvent(InventoryCloseEvent event) {
-		// TODO Check that the inventory is a GUI and if it is call the onGUIClose function of its model
 		InventoryHolder inventoryHolder = event.getInventory().getHolder();
 		if (inventoryHolder instanceof GUIView) {
 			GUIView guiView = (GUIView) inventoryHolder;

@@ -1,10 +1,10 @@
-package drguis.views.common;
+package drguis.common;
 
 import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
 
-import drguis.views.common.icons.IconProperties;
+import drguis.common.icons.IconProperties;
 
 public interface Icon {
 	

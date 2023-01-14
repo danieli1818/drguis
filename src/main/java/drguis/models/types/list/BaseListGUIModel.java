@@ -6,17 +6,17 @@ import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
 import drguis.common.CloseReason;
+import drguis.common.Icon;
+import drguis.common.actions.ConsumerAction;
 import drguis.common.events.GUIRelation;
+import drguis.common.events.IconClickEvent;
+import drguis.common.events.PlayerInventoryClickEvent;
+import drguis.common.icons.properties.SimpleIconProperties;
+import drguis.common.icons.types.ActionsIcon;
+import drguis.common.icons.utils.IconMetadata;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
-import drguis.views.common.Icon;
-import drguis.views.common.actions.ConsumerAction;
-import drguis.views.common.events.IconClickEvent;
-import drguis.views.common.events.PlayerInventoryClickEvent;
-import drguis.views.common.icons.properties.SimpleIconProperties;
-import drguis.views.common.icons.types.ActionsIcon;
-import drguis.views.common.icons.utils.IconMetadata;
 import drguis.views.types.LavishGUIView;
 import drguis.views.types.SparseGUIView;
 import drlibs.events.inventory.DragAndDropInventoryEvent;
@@ -84,7 +84,6 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	}
 
 	private Icon getPrevIcon(Player player, int currentPageIndex) {
-		System.out.println("Getting Prev Icon: " + currentPageIndex);
 		if (prevIconMetadata == null || currentPageIndex == 0) {
 			return null;
 		}
@@ -95,7 +94,6 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	}
 
 	private Icon getNextIcon(Player player, int currentPageIndex) {
-		System.out.println("Getting Next Icon: " + currentPageIndex + ", " + getNumOfPages(player));
 		if (prevIconMetadata == null || currentPageIndex + 1 >= getNumOfPages(player)) {
 			return null;
 		}

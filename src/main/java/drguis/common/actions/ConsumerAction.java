@@ -1,4 +1,4 @@
-package drguis.views.common.actions;
+package drguis.common.actions;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import drguis.views.common.Action;
-import drguis.views.common.Icon;
-import drguis.views.common.icons.types.SimpleIcon;
+import drguis.common.Action;
+import drguis.common.Icon;
+import drguis.common.icons.types.SimpleIcon;
 
 public class ConsumerAction implements Action {
 

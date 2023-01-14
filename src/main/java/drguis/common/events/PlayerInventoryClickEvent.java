@@ -1,4 +1,4 @@
-package drguis.views.common.events;
+package drguis.common.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -6,16 +6,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerEvent;
 
-import drguis.views.common.Icon;
 import drguis.views.GUIView;
 
-public class IconClickEvent extends PlayerEvent implements Cancellable {
+public class PlayerInventoryClickEvent extends PlayerEvent implements Cancellable {
 	
 	private static final HandlerList HANDLERS = new HandlerList();
 	
 	private GUIView guiView;
-	private Icon icon;
-	private int iconIndex;
 	
 	private boolean cancelled;
 	
@@ -30,12 +27,10 @@ public class IconClickEvent extends PlayerEvent implements Cancellable {
 		return HANDLERS;
 	}
 
-	public IconClickEvent(final InventoryClickEvent event, final Player player, final GUIView guiView, final Icon icon, int iconIndex) {
+	public PlayerInventoryClickEvent(final InventoryClickEvent event, final Player player, final GUIView guiView) {
 		super(player);
 		this.event = event;
 		this.guiView = guiView;
-		this.icon = icon;
-		this.iconIndex = iconIndex;
 		cancelled = false;
 	}
 	
@@ -43,14 +38,6 @@ public class IconClickEvent extends PlayerEvent implements Cancellable {
 		return guiView;
 	}
 	
-	public Icon getIcon() {
-		return icon;
-	}
-	
-	public int getIconIndex() {
-		return iconIndex;
-	}
-
 	@Override
 	public boolean isCancelled() {
 		return cancelled;
