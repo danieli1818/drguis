@@ -71,5 +71,11 @@ public class SeriesRegion implements Region {
 	public int getSize() {
 		return length;
 	}
+
+	@Override
+	public boolean isInRegion(int index) {
+		float n = ((float)(index - startIndex)) / incrementor;
+		return Math.floor(n) == n && n < length;
+	}
 	
 }

@@ -2,8 +2,9 @@ package drguis.models.decorators;
 
 import org.bukkit.entity.Player;
 
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drguis.common.CloseReason;
 import drguis.common.events.GUIRelation;
@@ -31,8 +32,13 @@ public class GUIModelDecorator implements GUIModel {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
-		guiModel.onDragAndDropEvent(event, relation);
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
+		guiModel.onNormalDragAndDropEvent(event, relation);
+	}
+	
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
+		guiModel.onDragInventoryDragAndDropEvent(event, isFromGUI);
 	}
 
 	@Override
@@ -55,6 +61,9 @@ public class GUIModelDecorator implements GUIModel {
 		guiModel.onGUICloseEvent(guiView, closeReason, player);
 	}
 
-	
-	
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		return guiModel.getUpdatedGUI(player, prevGUIView);
+	}
+
 }

@@ -32,6 +32,7 @@ public class GUIsUtils {
 			break;
 		case UPDATING_GUI:
 		case PREV_GUI:
+		case INPUT:
 			break;
 		default:
 			GUIsStack.getInstance().addGUIViewToPlayer(player.getUniqueId(), guiView);

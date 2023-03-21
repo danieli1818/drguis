@@ -32,6 +32,10 @@ public class GUIsManager {
 		return instance;
 	}
 	
+	public boolean hasGUIEditor(String id) {
+		return guis.containsKey(id);
+	}
+	
 	public GUIEditor getGUIEditor(String id) {
 		return guis.get(id);
 	}

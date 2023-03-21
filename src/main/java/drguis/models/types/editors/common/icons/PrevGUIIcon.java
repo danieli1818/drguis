@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import drguis.common.Icon;
 import drguis.common.actions.ConsumerAction;
 import drguis.common.icons.types.ActionIcon;
 import drguis.utils.GUIsUtils;
@@ -24,6 +25,20 @@ public class PrevGUIIcon extends ActionIcon {
 	
 	public PrevGUIIcon(ItemStack itemStack) {
 		super(itemStack, true, new ConsumerAction(GUIsUtils::openPrevGUI));
+	}
+	
+	@Override
+	public String getClassType() {
+		return PrevGUIIcon.getType();
+	}
+	
+	public static String getType() {
+		return "prev_gui_icon";
+	}
+	
+	@Override
+	public Icon cloneIcon() {
+		return new PrevGUIIcon(new ItemStack(getItemStack()));
 	}
 	
 	private static ItemStack getDefaultItemStack() {

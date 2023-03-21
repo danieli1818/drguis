@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.inventory.InventoryHolder;
 
+import drguis.common.GUIViewIdentifier;
 import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
@@ -32,5 +33,9 @@ public interface GUIView extends InventoryHolder {
 	public GUIView clearIcons();
 	
 	public GUIView cloneView();
+	
+	public GUIViewIdentifier getIdentifier();
+	
+	public GUIViewIdentifier setIdentifier(GUIViewIdentifier identifier);
 	
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
+import drguis.common.GUIViewIdentifier;
 import drguis.common.Icon;
 import drguis.common.Region;
 import drguis.models.GUIModel;
@@ -84,6 +85,16 @@ public abstract class GUIViewDecorator implements GUIView {
 	@Override
 	public GUIView cloneView() {
 		return guiView.cloneView();
+	}
+	
+	@Override
+	public GUIViewIdentifier getIdentifier() {
+		return guiView.getIdentifier();
+	}
+	
+	@Override
+	public GUIViewIdentifier setIdentifier(GUIViewIdentifier identifier) {
+		return guiView.setIdentifier(identifier);
 	}
 
 }

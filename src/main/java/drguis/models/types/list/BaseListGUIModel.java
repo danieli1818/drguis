@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
 import drguis.common.CloseReason;
+import drguis.common.GUIViewIdentifier;
 import drguis.common.Icon;
 import drguis.common.actions.ConsumerAction;
 import drguis.common.events.GUIRelation;
@@ -14,13 +15,15 @@ import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.common.icons.properties.SimpleIconProperties;
 import drguis.common.icons.types.ActionsIcon;
 import drguis.common.icons.utils.IconMetadata;
+import drguis.common.identifiers.IntGUIViewIdentifier;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
 import drguis.views.types.LavishGUIView;
 import drguis.views.types.SparseGUIView;
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drlibs.items.ItemStackBuilder;
 
@@ -55,6 +58,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		GUIView guiPage = new SparseGUIView(this, guiPageSize,
 				getTitle().replace("{PAGE_NUMBER}", String.valueOf(pageIndex + 1)));
 		addPrevNextIcons(player, guiPage, pageIndex);
+		guiPage.setIdentifier(new IntGUIViewIdentifier(pageIndex));
 		return guiPage;
 	}
 
@@ -62,6 +66,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		GUIView guiPage = new LavishGUIView(this, guiPageSize,
 				getTitle().replace("{PAGE_NUMBER}", String.valueOf(pageIndex + 1)));
 		addPrevNextIcons(player, guiPage, pageIndex);
+		guiPage.setIdentifier(new IntGUIViewIdentifier(pageIndex));
 		return guiPage;
 	}
 
@@ -113,7 +118,11 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
+	}
+	
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
 	}
 
 	@Override
@@ -145,6 +154,19 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	public static ItemStack getDefaultNextItemStack() {
 		return new ItemStackBuilder(Material.ARROW).setDisplayName("Next Page")
 				.setLoreString("Click to go to the next page").build();
+	}
+	
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		GUIViewIdentifier identifier = prevGUIView.getIdentifier();
+		if (identifier == null) {
+			return getGUI(player);
+		}
+		Object id = identifier.getValue("id");
+		if (id instanceof Integer) {
+			return getGUIPage(player, (Integer) id);
+		}
+		return getGUI(player);
 	}
 
 }

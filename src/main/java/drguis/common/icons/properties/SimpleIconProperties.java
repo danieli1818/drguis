@@ -1,16 +1,31 @@
 package drguis.common.icons.properties;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import drguis.common.icons.IconProperties;
 
 public class SimpleIconProperties implements IconProperties {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3084433944226423011L;
 	private Map<String, Object> properties;
 	
 	public SimpleIconProperties() {
 		properties = new HashMap<>();
+	}
+	
+	public SimpleIconProperties(IconProperties iconProperties) {
+		this();
+		if (iconProperties != null) {
+			for (String property : iconProperties.getProperties()) {
+				properties.put(property, iconProperties.getObject(property));
+			}
+		}
 	}
 
 	@Override
@@ -81,6 +96,11 @@ public class SimpleIconProperties implements IconProperties {
 	
 	public Object removeProperty(String propertyName) {
 		return properties.remove(propertyName);
+	}
+
+	@Override
+	public Set<String> getProperties() {
+		return new HashSet<>(properties.keySet());
 	}
 	
 }

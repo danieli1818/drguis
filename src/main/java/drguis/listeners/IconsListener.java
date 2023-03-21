@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import drguis.common.Icon;
@@ -16,13 +17,17 @@ public class IconsListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClickEvent(InventoryClickEvent event) {
-		InventoryHolder inventoryHolder = event.getClickedInventory().getHolder();
-		if (inventoryHolder instanceof GUIView) {
-			Player player = (Player) event.getWhoClicked();
-			GUIView guiView = (GUIView) inventoryHolder;
-			Icon icon = guiView.getIcon(event.getRawSlot());
-			Bukkit.getPluginManager().callEvent(new IconClickEvent(event, player, guiView, icon, event.getRawSlot()));
-			return;
+		Inventory clickedInventory = event.getClickedInventory();
+		InventoryHolder inventoryHolder = null;
+		if (clickedInventory != null) {
+			inventoryHolder = clickedInventory.getHolder();
+			if (inventoryHolder instanceof GUIView) {
+				Player player = (Player) event.getWhoClicked();
+				GUIView guiView = (GUIView) inventoryHolder;
+				Icon icon = guiView.getIcon(event.getRawSlot());
+				Bukkit.getPluginManager().callEvent(new IconClickEvent(event, player, guiView, icon, event.getRawSlot()));
+				return;
+			}
 		}
 		inventoryHolder = event.getInventory().getHolder();
 		if (inventoryHolder instanceof GUIView) {

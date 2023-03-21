@@ -3,38 +3,53 @@ package drguis.models.types.editors;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
+import drguis.common.Action;
 import drguis.common.CloseReason;
 import drguis.common.Icon;
 import drguis.common.events.GUIRelation;
 import drguis.common.events.IconClickEvent;
 import drguis.common.events.PlayerInventoryClickEvent;
+import drguis.common.icons.IconProperties;
+import drguis.common.icons.IconPropertiesFields;
 import drguis.common.icons.SerializableIcon;
 import drguis.common.icons.properties.SimpleIconProperties;
 import drguis.common.icons.types.ActionsIcon;
 import drguis.common.icons.types.SimpleIcon;
+import drguis.common.items.UsefulItemStacks;
+import drguis.common.items.UsefulItemStacksIDs;
+import drguis.management.GUIsEditorsManager;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
 import drguis.models.types.SimpleGUIModel;
-import drguis.models.types.editors.common.GUIMode;
-import drguis.models.types.editors.common.guis.ActionsIconMenuEditor;
+import drguis.models.types.editors.common.CommonGUIMode;
+import drguis.models.types.editors.common.factories.ActionsIconsFactory;
+import drguis.models.types.editors.common.factories.IconsFactory;
+import drguis.models.types.editors.common.factories.SimpleIconsFactory;
 import drguis.models.types.editors.common.icons.ModeActionsIcon;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
 import drguis.views.types.SparseGUIView;
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drlibs.items.ItemStackBuilder;
+import drlibs.utils.functions.InventoriesUtils;
+import drlibs.utils.functions.InventoriesUtils.InventorySlotData;
 
 public class SimpleGUIEditor implements GUIEditor {
 
@@ -47,7 +62,11 @@ public class SimpleGUIEditor implements GUIEditor {
 
 	private transient GUIView editorGuiView;
 
-	private transient ModeActionsIcon modeIcon;
+	private transient ModeActionsIcon editModeIcon;
+
+	private transient ModeActionsIcon addIconTypeModeIcon;
+
+	private transient Map<String, IconsFactory> iconsFactories;
 
 	private int pageSize;
 
@@ -63,7 +82,9 @@ public class SimpleGUIEditor implements GUIEditor {
 	}
 
 	private void initializeGUI(int editorPageSize) {
-		initializeModeIcon(editorPageSize);
+		initializeEditModeIcon(editorPageSize);
+		initializeAddIconTypeModeIcon(editorPageSize);
+		initializeIconsFactories();
 		SimpleIconProperties iconProperties = new SimpleIconProperties();
 		iconProperties.setBoolean(shouldSerializeIconPropertyID, false);
 		Icon nullIcon = new SimpleIcon(new ItemStack(Material.STAINED_GLASS), iconProperties);
@@ -74,49 +95,86 @@ public class SimpleGUIEditor implements GUIEditor {
 		}
 	}
 
-	private void initializeModeIcon(int editorPageSize) {
-		modeIcon = new ModeActionsIcon();
+	private void initializeEditModeIcon(int editorPageSize) {
+		editModeIcon = new ModeActionsIcon(CommonGUIMode.NORMAL);
 		SimpleIconProperties iconProperties = new SimpleIconProperties();
 		iconProperties.setBoolean(shouldSerializeIconPropertyID, false);
 		SimpleIcon normalModeIcon = new SimpleIcon(
-				new ItemStackBuilder(Material.DIAMOND_PICKAXE).setDisplayName("Normal Editing Mode")
-						.setLoreString("Drag and drop items on the GUI to edit it").build(),
+				UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.normalEditingModeItemStack),
 				iconProperties);
-		SimpleIcon innerEditModeIcon = new SimpleIcon(new ItemStackBuilder(Material.DIAMOND_SWORD)
-				.setDisplayName("Inner Editing Mode").setLoreString("Click on an icon to edit it").build(),
+		SimpleIcon innerEditModeIcon = new SimpleIcon(
+				UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.innerEditingModeItemStack),
 				iconProperties);
-		modeIcon.setIcon(GUIMode.NORMAL, normalModeIcon);
-		modeIcon.setIcon(GUIMode.EDIT, innerEditModeIcon);
-		editorGuiView.setIcon(editorPageSize - 9, modeIcon);
+		editModeIcon.setIcon(CommonGUIMode.NORMAL, normalModeIcon);
+		editModeIcon.setIcon(CommonGUIMode.EDIT, innerEditModeIcon);
+		editorGuiView.setIcon(editorPageSize - 9, editModeIcon);
+	}
+
+	private void initializeAddIconTypeModeIcon(int editorPageSize) {
+		addIconTypeModeIcon = new ModeActionsIcon("simple");
+		SimpleIconProperties iconProperties = new SimpleIconProperties();
+		iconProperties.setBoolean(shouldSerializeIconPropertyID, false);
+		addIconTypeModeIcon.setIcon("simple",
+				new SimpleIcon(new ItemStackBuilder(Material.DIAMOND_PICKAXE).setDisplayName("Simple Icon")
+						.setLoreString("Move items from your inventory to the GUI to create simple icons").build(),
+						iconProperties));
+//		addIconTypeModeIcon.setIcon("action",
+//				new SimpleIcon(new ItemStackBuilder(Material.DIAMOND_PICKAXE).setDisplayName("Action Icon")
+//						.setLoreString("Move items from your inventory to the GUI to create action icons").build(),
+//						iconProperties));
+		addIconTypeModeIcon.setIcon("actions",
+				new SimpleIcon(new ItemStackBuilder(Material.DIAMOND_PICKAXE).setDisplayName("Actions Icon")
+						.setLoreString("Move items from your inventory to the GUI to create actions icons").build(),
+						iconProperties));
+	}
+
+	private void initializeIconsFactories() {
+		iconsFactories = new HashMap<>();
+		IconProperties iconProperties = new SimpleIconProperties()
+				.setBoolean(IconPropertiesFields.CANCEL_CLICK_EVENT_FIELD, true);
+		iconsFactories.put("simple", new SimpleIconsFactory(iconProperties));
+//		iconsFactories.put("action", new ActionIconsFactory(iconProperties));
+		iconsFactories.put("actions", new ActionsIconsFactory(iconProperties));
 	}
 
 	@Override
 	public GUIView getGUI(Player player) {
-		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
-			GUIView guiView = new SparseGUIView(this, editorGuiView.getSize(), editorGuiView.getTitle());
-			for (int i = 0; i < editorGuiView.getSize(); i++) {
-				guiView.setIcon(i, editorGuiView.getIcon(i));
-			}
-			guiView.setIcon(editorGuiView.getSize() - 8, new PrevGUIIcon());
-			return guiView;
+		GUIView guiView = new SparseGUIView(this, editorGuiView.getSize(), editorGuiView.getTitle());
+		for (int i = 0; i < editorGuiView.getSize(); i++) {
+			guiView.setIcon(i, editorGuiView.getIcon(i));
 		}
-		return editorGuiView;
+		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
+			guiView.setIcon(editorGuiView.getSize() - 8, new PrevGUIIcon());
+		}
+		System.out.println("Edit Mode Icon: " + editModeIcon.getMode());
+		System.out.println("Edit Mode Icon Equals " + CommonGUIMode.NORMAL + " : "
+				+ editModeIcon.getMode().equals(CommonGUIMode.NORMAL));
+		if (editModeIcon.getMode().equals(CommonGUIMode.NORMAL)) {
+			System.out.println("Yay entered if and added addIconTypeModeIcon Icon!");
+			guiView.setIcon(editorGuiView.getSize() - 4, addIconTypeModeIcon);
+		}
+		return guiView;
 	}
 
 	@Override
 	public void onIconClickEvent(IconClickEvent event) {
 		if (event.getIconIndex() >= pageSize) {
 			IconsFunctionsUtils.defaultOnIconClickEvent(event);
+			System.out.println("Item on cursor: " + event.getPlayer().getItemOnCursor());
+			if (event.isCancelled()) {
+				event.getPlayer().setItemOnCursor(null);
+			}
 			GUIsAPI.updateGUIToPlayer(event.getPlayer());
+			System.out.println("In onIconClickEvent update!");
 			return;
 		}
-		switch (modeIcon.getMode()) {
-		case EDIT:
+		switch (editModeIcon.getMode()) {
+		case CommonGUIMode.EDIT:
 			event.setCancelled(true);
 			Icon icon = event.getIcon();
-			if (icon != null) {
+			if (icon != null && GUIsEditorsManager.getDefaultInstance().hasEditor(icon)) {
 				Player player = event.getPlayer();
-				GUIsUtils.openSubGUI(player, new ActionsIconMenuEditor(icon)::getGUI);
+				GUIsUtils.openSubGUI(player, GUIsEditorsManager.getDefaultInstance().getEditor(icon)::getGUI);
 			}
 			break;
 		default: // NORMAL
@@ -135,7 +193,7 @@ public class SimpleGUIEditor implements GUIEditor {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
 		System.out.println("Yay entered SimpleGUIEditor's onDragAndDropEvent!");
 		int fromSlot;
 		int toSlot;
@@ -146,6 +204,10 @@ public class SimpleGUIEditor implements GUIEditor {
 			System.out.println("FROM");
 			fromSlot = event.getStartDragEvent().getSlot();
 			editorGuiView.setIcon(fromSlot, null);
+			ItemStack cursorItem = event.getDropEvent().getCursor();
+			if (cursorItem != null) {
+				event.getPlayer().getInventory().setItem(event.getDropEvent().getSlot(), new ItemStack(cursorItem));
+			}
 			break;
 		case INNER:
 			System.out.println("INNER");
@@ -158,17 +220,154 @@ public class SimpleGUIEditor implements GUIEditor {
 			break;
 		default: // TO
 			System.out.println("TO");
+			System.out.println("Is Cancelled: " + event.getDropEvent().isCancelled());
+//			event.getDropEvent().setCancelled(true);
 			toSlot = event.getDropEvent().getSlot();
 			toIcon = editorGuiView.getIcon(toSlot);
 			if (toIcon == null) {
-				editorGuiView.setIcon(toSlot, new ActionsIcon(new ItemStack(event.getDropEvent().getCursor()), true));
+				editorGuiView.setIcon(toSlot, iconsFactories.get(addIconTypeModeIcon.getMode())
+						.apply(new ItemStack(event.getDropEvent().getCursor())));
 			} else { // TODO change to keep the actions
-				editorGuiView.setIcon(toSlot, new ActionsIcon(new ItemStack(event.getDropEvent().getCursor()), true));
+				toIcon.setItemStack(new ItemStack(event.getDropEvent().getCursor()));
 			}
 			break;
 		}
+		System.out.println("First Icon In Editor GUI View: " + editorGuiView.getIcon(0));
+		System.out.println("Icons In Editor GUI View: " + editorGuiView.getIcons());
+		System.out.println("Editor GUI View: " + editorGuiView);
+
+		event.getDropEvent().setCancelled(true);
 		event.getPlayer().setItemOnCursor(null);
 		GUIsAPI.updateGUIToPlayer(event.getPlayer());
+	}
+
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
+		System.out.println("Drag Inventory Event: " + event);
+		System.out.println("Inventory Slots: " + event.getDropEvent().getInventorySlots());
+		System.out.println("New Items: " + event.getDropEvent().getNewItems());
+		System.out.println("Old Cursor: " + event.getDropEvent().getOldCursor());
+		System.out.println("Cursor: " + event.getDropEvent().getCursor());
+		// TODO handle event
+		InventoryClickEvent startDragEvent = event.getStartDragEvent();
+		InventoryDragEvent dropEvent = event.getDropEvent();
+		int fromSlot = startDragEvent.getSlot();
+		Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> topAndBottomInventoriesNewItems = getTopAndBottomInventoriesNewItems(
+				event.getDropEvent().getNewItems(), event.getDropEvent().getView());
+		Map<Integer, ItemStack> topInventoryNewItems = topAndBottomInventoriesNewItems.getKey();
+		Map<Integer, ItemStack> bottomInventoryNewItems = topAndBottomInventoriesNewItems.getValue();
+		if (isFromGUI) {
+			Icon fromIcon = editorGuiView.getIcon(fromSlot);
+			for (Map.Entry<Integer, ItemStack> entry : topInventoryNewItems.entrySet()) {
+				Icon newIcon = fromIcon.cloneIcon();
+				newIcon.setItemStack(new ItemStack(entry.getValue()));
+				editorGuiView.setIcon(entry.getKey(), newIcon);
+			}
+			if (!topInventoryNewItems.containsKey(fromSlot) ) {
+				editorGuiView.setIcon(fromSlot, null);
+			}
+		} else {
+			for (Map.Entry<Integer, ItemStack> entry : topInventoryNewItems.entrySet()) {
+				Icon newIcon = iconsFactories.get(addIconTypeModeIcon.getMode()).apply(new ItemStack(entry.getValue()));
+				editorGuiView.setIcon(entry.getKey(), newIcon);
+			}
+		}
+		for (Map.Entry<Integer, ItemStack> entry : bottomInventoryNewItems.entrySet()) {
+			event.getPlayer().getInventory().setItem(entry.getKey(), new ItemStack(entry.getValue()));
+		}
+//		if (isFromGUI) {
+//			Icon fromIcon = editorGuiView.getIcon(fromSlot);
+//			Map<Integer, ItemStack> newItems = dropEvent.getNewItems();
+//			System.out.println("Drop Event Slots: " + dropEvent.getInventorySlots());
+//			System.out.println("Drop Event Inventory Contents: " + dropEvent.getInventory().getContents());
+//			if (!dropEvent.getInventorySlots().contains(fromSlot)) {
+//				if (dropEvent.getInventorySlots().size() == 1) {
+//					int dropSlot = dropEvent.getInventorySlots().iterator().next();
+//					if (dropSlot < 0) { // dropping item
+//						editorGuiView.setIcon(fromSlot, null);
+//					} else if (dropSlot < pageSize) { // swapping icons
+//						Icon dropIcon = editorGuiView.getIcon(dropSlot);
+//						editorGuiView.setIcon(dropSlot, editorGuiView.getIcon(fromSlot));
+//						editorGuiView.setIcon(fromSlot, dropIcon);
+//					} else { // to player's inventory
+//						editorGuiView.setIcon(fromSlot, null);
+//						event.getPlayer().getInventory().setItem(dropSlot, new ItemStack(event.getPlayer().getItemOnCursor()));
+//						// TODO Set item in player's inventory
+//					}
+//				} else {
+//					editorGuiView.setIcon(fromSlot, null);
+//					for (Integer slot : dropEvent.getInventorySlots()) { // TODO Change the way of copying icons to clone
+//						// function of the Icon
+//						System.out.println("Slot: " + slot + " has: " + newItems.get(slot));
+//						if (newItems.get(slot) == null) {
+//							editorGuiView.setIcon(slot, null);
+//						} else {
+//							ActionsIcon icon = new ActionsIcon(new ItemStack(newItems.get(slot)), true);
+//							for (Action action : fromIcon.getActions()) {
+//								icon.addAction(action);
+//							}
+//							editorGuiView.setIcon(slot, icon);
+//						}
+//					}
+//				}
+//			} else {
+//				for (Integer slot : dropEvent.getInventorySlots()) { // TODO Change the way of copying icons to clone
+//					// function of the Icon
+//					System.out.println("Slot: " + slot + " has: " + newItems.get(slot));
+//					if (newItems.get(slot) == null) {
+//						editorGuiView.setIcon(slot, null);
+//					} else {
+//						ActionsIcon icon = new ActionsIcon(new ItemStack(newItems.get(slot)), true);
+//						for (Action action : fromIcon.getActions()) {
+//							icon.addAction(action);
+//						}
+//						editorGuiView.setIcon(slot, icon);
+//					}
+//				}
+//			}
+//		} else {
+//			Map<Integer, ItemStack> newItems = dropEvent.getNewItems();
+//			System.out.println("Drop Event Slots 2: " + dropEvent.getInventorySlots());
+//			for (Integer slot : dropEvent.getInventorySlots()) { // TODO Change the way of copying icons to clone
+//																	// function of the Icon
+//				System.out.println("Slot 2: " + slot + " has: " + newItems.get(slot));
+//				Icon icon = iconsFactories.get(addIconTypeModeIcon.getMode()).apply(new ItemStack(newItems.get(slot)));
+//				editorGuiView.setIcon(slot, icon);
+//			}
+//		}
+
+//		ItemStack fromItemStack = startDragEvent.getCurrentItem();
+//		ActionsIcon icon = new ActionsIcon(new ItemStack(fromItemStack), true); // TODO Change the way of copying icons
+//																				// to clone
+//																				// function of the Icon
+//		for (Action action : fromIcon.getActions()) {
+//			icon.addAction(action);
+//		}
+//		editorGuiView.setIcon(fromSlot, icon);
+
+		event.getDropEvent().setCursor(null);
+//		event.getDropEvent().setCancelled(true);
+		event.getPlayer().setItemOnCursor(null);
+		GUIsAPI.updateGUIToPlayer(event.getPlayer());
+		event.getPlayer().setItemOnCursor(null);
+	}
+
+	private Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> getTopAndBottomInventoriesNewItems(
+			Map<Integer, ItemStack> newItems, InventoryView inventoryView) {
+		Map<Integer, ItemStack> topInventoryNewItems = new HashMap<>();
+		Map<Integer, ItemStack> bottomInventoryNewItems = new HashMap<>();
+		for (Map.Entry<Integer, ItemStack> newItemEntry : newItems.entrySet()) {
+			int rawSlot = newItemEntry.getKey();
+			ItemStack itemStack = newItemEntry.getValue();
+			InventorySlotData inventorySlotData = InventoriesUtils.parseRawSlot(inventoryView, rawSlot);
+			if (inventorySlotData.isTopInventory()) {
+				topInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
+			} else {
+				bottomInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
+			}
+		}
+		return new AbstractMap.SimpleEntry<Map<Integer, ItemStack>, Map<Integer, ItemStack>>(topInventoryNewItems,
+				bottomInventoryNewItems);
 	}
 
 	@Override
@@ -222,7 +421,7 @@ public class SimpleGUIEditor implements GUIEditor {
 		for (Map.Entry<Integer, Icon> iconEntry : icons.entrySet()) {
 			Icon icon = iconEntry.getValue();
 			if (icon == null || !(icon instanceof SerializableIcon) || (icon.getProperties() != null
-					&& icon.getProperties().getBoolean(shouldSerializeIconPropertyID) == false)) {
+					&& Boolean.FALSE.equals(icon.getProperties().getBoolean(shouldSerializeIconPropertyID)))) {
 				continue;
 			}
 			iconsToSerialize.put(iconEntry.getKey(), (SerializableIcon) icon);
@@ -241,6 +440,11 @@ public class SimpleGUIEditor implements GUIEditor {
 			editorGuiView.setIcon(iconEntry.getKey(), iconEntry.getValue());
 		}
 		initializeGUI(editorPageSize);
+	}
+
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		return getGUI(player);
 	}
 
 }

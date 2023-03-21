@@ -6,6 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import drguis.common.CloseReason;
@@ -15,8 +17,9 @@ import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.GUIModel;
 import drguis.views.GUIView;
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 
 public class GUIsModelsListener implements Listener {
@@ -32,28 +35,54 @@ public class GUIsModelsListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event) {
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event) {
+		System.out.println("Drag and drop event! " + event);
 		InventoryClickEvent startDragEvent = event.getStartDragEvent();
 		InventoryClickEvent dropEvent = event.getDropEvent();
 		InventoryHolder startInventoryHolder = startDragEvent.getClickedInventory().getHolder();
-		InventoryHolder dropInventoryHolder = dropEvent.getClickedInventory().getHolder();
+		Inventory dropInventory = dropEvent.getClickedInventory();
+		InventoryHolder dropInventoryHolder = null;
+		if (dropInventory != null) {
+			dropInventoryHolder = dropInventory.getHolder();
+		}
 		if (startInventoryHolder instanceof GUIView) {
 			GUIModel startGUIModel = ((GUIView)startInventoryHolder).getGUIHolder();
 			if (dropInventoryHolder instanceof GUIView) {
 				GUIModel dropGUIModel = ((GUIView)dropInventoryHolder).getGUIHolder();
 				if (startGUIModel == dropGUIModel) {
-					startGUIModel.onDragAndDropEvent(event, GUIRelation.INNER);
+					startGUIModel.onNormalDragAndDropEvent(event, GUIRelation.INNER);
 				} else {
-					startGUIModel.onDragAndDropEvent(event, GUIRelation.FROM);
-					dropGUIModel.onDragAndDropEvent(event, GUIRelation.TO);
+					startGUIModel.onNormalDragAndDropEvent(event, GUIRelation.FROM);
+					dropGUIModel.onNormalDragAndDropEvent(event, GUIRelation.TO);
 				}
 			} else {
-				startGUIModel.onDragAndDropEvent(event, GUIRelation.FROM);
+				startGUIModel.onNormalDragAndDropEvent(event, GUIRelation.FROM);
 			}
 		} else {
 			if (dropInventoryHolder instanceof GUIView) {
 				GUIModel dropGUIModel = ((GUIView)dropInventoryHolder).getGUIHolder();
-				dropGUIModel.onDragAndDropEvent(event, GUIRelation.TO);
+				dropGUIModel.onNormalDragAndDropEvent(event, GUIRelation.TO);
+			}
+		}
+		System.out.println("Yay drag and drop event!");
+	}
+	
+	@EventHandler
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event) {
+		System.out.println("Drag and drop event! " + event);
+		InventoryClickEvent startDragEvent = event.getStartDragEvent();
+		InventoryDragEvent dropEvent = event.getDropEvent();
+		Inventory startInventory = startDragEvent.getClickedInventory();
+		Inventory dropInventory = dropEvent.getInventory();
+		InventoryHolder startInventoryHolder = startInventory.getHolder();
+		InventoryHolder dropInventoryHolder = dropInventory.getHolder();
+		if (startInventoryHolder instanceof GUIView) {
+			GUIModel startGUIModel = ((GUIView)startInventoryHolder).getGUIHolder();
+			startGUIModel.onDragInventoryDragAndDropEvent(event, true);
+		} else {
+			if (dropInventoryHolder instanceof GUIView) {
+				GUIModel dropGUIModel = ((GUIView)dropInventoryHolder).getGUIHolder();
+				dropGUIModel.onDragInventoryDragAndDropEvent(event, false);
 			}
 		}
 		System.out.println("Yay drag and drop event!");

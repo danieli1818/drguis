@@ -1,7 +1,6 @@
 package drguis.models.types.editors.common.icons;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,23 +11,23 @@ import drguis.common.Action;
 import drguis.common.Icon;
 import drguis.common.actions.ConsumerAction;
 import drguis.common.icons.IconProperties;
-import drguis.models.types.editors.common.GUIMode;
+import drguis.models.types.editors.common.CommonGUIMode;
 
 public class ModeActionsIcon implements Icon {
 
-	private GUIMode mode;
-	private Map<GUIMode, Icon> icons;
+	private String mode;
+	private Map<String, Icon> icons;
 	
 	public ModeActionsIcon() {
-		this(GUIMode.NORMAL);
+		this(CommonGUIMode.NORMAL);
 	}
 	
-	public ModeActionsIcon(GUIMode mode) {
+	public ModeActionsIcon(String mode) {
 		this.mode = mode;
-		this.icons = new HashMap<>();
+		this.icons = new LinkedHashMap<>();
 	}
 	
-	public ModeActionsIcon setIcon(GUIMode mode, Icon icon) {
+	public ModeActionsIcon setIcon(String mode, Icon icon) {
 		if (icon == null) {
 			icons.remove(mode);
 		} else {
@@ -37,8 +36,8 @@ public class ModeActionsIcon implements Icon {
 		return this;
 	}
 	
-	public boolean setMode(GUIMode mode) {
-		if (this.mode == mode) {
+	public boolean setMode(String mode) {
+		if (this.mode.equals(mode)) {
 			return false;
 		}
 		this.mode = mode;
@@ -49,18 +48,26 @@ public class ModeActionsIcon implements Icon {
 		return icons.get(mode);
 	}
 	
-	public GUIMode getMode() {
+	public String getMode() {
 		return mode;
 	}
 	
 	public void toggleMode() {
-		List<GUIMode> modes = Arrays.asList(GUIMode.values());
-		int currentGUIModeIndex = modes.indexOf(mode);
-		do {
-			currentGUIModeIndex++;
-			currentGUIModeIndex %= modes.size();
-			mode = modes.get(currentGUIModeIndex);
-		} while (getIcon() == null);
+		boolean passedMode = false;
+		String newMode = null;
+		for (String mode : icons.keySet()) {
+			if (passedMode) {
+				newMode = mode;
+				break;
+			}
+			if (this.mode.equals(mode)) {
+				passedMode = true;
+			}
+		}
+		if (newMode == null) {
+			newMode = icons.keySet().iterator().next();
+		}
+		this.mode = newMode;
 	}
 	
 	@Override
@@ -84,6 +91,29 @@ public class ModeActionsIcon implements Icon {
 	@Override
 	public IconProperties getProperties() {
 		return getIcon().getProperties();
+	}
+
+	@Override
+	public ItemStack setItemStack(ItemStack itemStack) {
+		return null;
+	}
+	
+	@Override
+	public String getClassType() {
+		return ModeActionsIcon.getType();
+	}
+	
+	public static String getType() {
+		return "mode_actions_icon";
+	}
+
+	@Override
+	public Icon cloneIcon() {
+		ModeActionsIcon icon = new ModeActionsIcon(mode);
+		for (Map.Entry<String, Icon> iconEntry : icons.entrySet()) {
+			icon.setIcon(iconEntry.getKey(), iconEntry.getValue());
+		}
+		return icon;
 	}
 	
 }

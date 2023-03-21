@@ -33,8 +33,12 @@ public class GUIsAPI {
 		}
 		InventoryHolder inventoryHolder = inventory.getHolder();
 		if (inventoryHolder instanceof GUIView) {
+			System.out.println("First Icon Of InventoryHolder: " + ((GUIView) inventoryHolder).getIcon(0));
+			System.out.println("Icons Of InventoryHolder: " + ((GUIView) inventoryHolder).getIcons());
+			System.out.println("GUIView: " + inventoryHolder);
+			GUIView guiView = (GUIView) inventoryHolder;
 			PlayersGUIsCloseReasonsManager.getInstance().setCloseReason(player.getUniqueId(), CloseReason.UPDATING_GUI);
-			player.openInventory(((GUIView) inventoryHolder).getInventory());
+			player.openInventory(guiView.getGUIHolder().getUpdatedGUI(player, guiView).getInventory());
 		}
 	}
 	

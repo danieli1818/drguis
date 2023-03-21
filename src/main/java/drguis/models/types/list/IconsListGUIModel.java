@@ -92,7 +92,7 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 		return icons;
 	}
 
-	private Region getRegion() {
+	protected Region getRegion() {
 		return region;
 	}
 

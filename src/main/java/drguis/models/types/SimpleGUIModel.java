@@ -2,8 +2,9 @@ package drguis.models.types;
 
 import org.bukkit.entity.Player;
 
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drguis.common.CloseReason;
 import drguis.common.events.GUIRelation;
@@ -34,7 +35,10 @@ public class SimpleGUIModel implements GUIModel {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {}
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {}
+	
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {}
 
 	@Override
 	public void onSlotSwapEvent(ItemSlotSwapEvent event) {}
@@ -49,6 +53,10 @@ public class SimpleGUIModel implements GUIModel {
 	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
 		GUIsUtils.defaultOnGUICloseEvent(guiView, closeReason, player);
 	}
-	
-	
+
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		return guiView;
+	}
+
 }

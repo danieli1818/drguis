@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import drguis.commands.DRGuisCommands;
 import drguis.common.icons.types.ActionsIcon;
+import drguis.common.items.UsefulItemStacks;
 import drguis.listeners.GUIsModelsListener;
 import drguis.listeners.IconsListener;
 import drguis.management.ActionsManager;
@@ -78,9 +79,10 @@ public class DRGuis extends JavaPlugin implements MessagesPlugin {
 
 		MessagesStorage messagesStorage = new MessagesStorage(this);
 		messagesSender = new MessagesSender(this, messagesStorage);
-
+		
 		reloaderManager.registerReloadable(logger);
 		reloaderManager.registerReloadable(messagesStorage);
+		reloaderManager.registerReloadable(UsefulItemStacks.getInstance(this));
 
 		reloaderManager.reloadAllSet();
 

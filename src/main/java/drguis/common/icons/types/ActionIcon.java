@@ -10,8 +10,10 @@ import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.common.Action;
+import drguis.common.Icon;
 import drguis.common.icons.IconProperties;
 import drguis.common.icons.SerializableIcon;
+import drguis.common.icons.properties.SimpleIconProperties;
 
 public class ActionIcon extends SimpleIcon implements SerializableIcon {
 	
@@ -37,6 +39,20 @@ public class ActionIcon extends SimpleIcon implements SerializableIcon {
 		List<Action> actions = new ArrayList<>();
 		actions.add(action);
 		return actions;
+	}
+	
+	@Override
+	public String getClassType() {
+		return ActionsIcon.getType();
+	}
+	
+	public static String getType() {
+		return "action_icon";
+	}
+	
+	@Override
+	public Icon cloneIcon() {
+		return new ActionIcon(new ItemStack(getItemStack()), new SimpleIconProperties(getProperties()), action);
 	}
 	
 	private Action setAction(Action action) {

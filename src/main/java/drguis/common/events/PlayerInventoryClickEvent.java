@@ -14,8 +14,6 @@ public class PlayerInventoryClickEvent extends PlayerEvent implements Cancellabl
 	
 	private GUIView guiView;
 	
-	private boolean cancelled;
-	
 	private InventoryClickEvent event;
 
 	public static HandlerList getHandlerList() {
@@ -31,7 +29,10 @@ public class PlayerInventoryClickEvent extends PlayerEvent implements Cancellabl
 		super(player);
 		this.event = event;
 		this.guiView = guiView;
-		cancelled = false;
+	}
+	
+	public InventoryClickEvent getInventoryClickEvent() {
+		return event;
 	}
 	
 	public GUIView getGuiView() {
@@ -40,12 +41,11 @@ public class PlayerInventoryClickEvent extends PlayerEvent implements Cancellabl
 	
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return event.isCancelled();
 	}
 
 	@Override
 	public void setCancelled(boolean cancel) {
-		cancelled = cancel;
 		event.setCancelled(cancel);
 	}
 	

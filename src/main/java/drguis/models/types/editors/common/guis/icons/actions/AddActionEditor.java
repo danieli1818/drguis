@@ -1,4 +1,4 @@
-package drguis.models.types.editors.common.guis;
+package drguis.models.types.editors.common.guis.icons.actions;
 
 import org.bukkit.entity.Player;
 
@@ -17,15 +17,15 @@ import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
-import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 
-public class AddActionMenuEditor extends IconsListGUIModel implements GUIModel {
+public class AddActionEditor extends IconsListGUIModel implements GUIModel {
 
 	private ActionsIcon icon;
 
-	public AddActionMenuEditor(ActionsIcon icon) {
+	public AddActionEditor(ActionsIcon icon) {
 		super(new ListRegion(10, 12, 14, 16, 28, 30, 32, 34), "Add Action Editor", 45,
 				new IconMetadata(getDefaultPrevItemStack(), 37), new IconMetadata(getDefaultNextItemStack(), 44));
 		this.icon = icon;
@@ -57,7 +57,7 @@ public class AddActionMenuEditor extends IconsListGUIModel implements GUIModel {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
 	}
 
 	@Override

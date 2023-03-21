@@ -5,13 +5,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
 
 import drguis.common.Action;
+import drguis.common.Icon;
 import drguis.common.icons.IconProperties;
 import drguis.common.icons.SerializableIcon;
+import drguis.common.icons.properties.SimpleIconProperties;
 
 public class ActionsIcon extends SimpleIcon implements SerializableIcon {
 
@@ -37,14 +40,50 @@ public class ActionsIcon extends SimpleIcon implements SerializableIcon {
 		return this;
 	}
 	
+	public ActionsIcon addActions(Collection<? extends Action> actions) {
+		this.actions.addAll(actions);
+		return this;
+	}
+	
 	public ActionsIcon removeAction(Action action) {
 		actions.remove(action);
+		return this;
+	}
+	
+	public ActionsIcon removeActions(Collection<? extends Action> actions) {
+		actions.removeAll(actions);
 		return this;
 	}
 	
 	@Override
 	public List<Action> getActions() {
 		return actions;
+	}
+	
+	public int setAction(int index, Action action) {
+		if (index < 0) {
+			return -1;
+		}
+		if (actions.size() > index) {
+			actions.set(index, action);
+			return index;
+		}
+		actions.add(action);
+		return actions.size() - 1;
+	}
+	
+	@Override
+	public String getClassType() {
+		return ActionsIcon.getType();
+	}
+	
+	public static String getType() {
+		return "actions_icon";
+	}
+	
+	@Override
+	public Icon cloneIcon() {
+		return new ActionsIcon(new ItemStack(getItemStack()), new SimpleIconProperties(getProperties())).addActions(actions);
 	}
 	
 	private void writeObject(ObjectOutputStream oos) throws IOException {

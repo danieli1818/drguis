@@ -25,8 +25,9 @@ import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
 import drguis.views.types.SparseGUIView;
-import drlibs.events.inventory.DragAndDropInventoryEvent;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.ItemSlotSwapEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 
 public class CommandActionEditor implements GUIModel {
@@ -94,7 +95,11 @@ public class CommandActionEditor implements GUIModel {
 	}
 
 	@Override
-	public void onDragAndDropEvent(DragAndDropInventoryEvent event, GUIRelation relation) {
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
+	}
+	
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
 	}
 
 	@Override
@@ -108,6 +113,11 @@ public class CommandActionEditor implements GUIModel {
 	@Override
 	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
 		GUIsUtils.defaultOnGUICloseEvent(guiView, closeReason, player);
+	}
+	
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		return getGUI(player);
 	}
 
 }

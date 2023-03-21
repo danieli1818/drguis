@@ -17,13 +17,14 @@ import drguis.views.GUIView;
 import drlibs.common.commands.RootCommand;
 import drlibs.common.files.FileConfigurationsUtils;
 import drlibs.common.plugin.MessagesPlugin;
+import drlibs.items.ItemStackBuilder;
 import drlibs.utils.functions.ItemsUtils;
 
 public class DRGuisCommands extends RootCommand {
 
 	private static final String DESCRIPTION = "DRGuis Commands";
 	private static final String PERMISSION = "drguis.use";
-	
+
 	private SimpleGUIEditor editor;
 	private boolean isEditor;
 
@@ -42,7 +43,7 @@ public class DRGuisCommands extends RootCommand {
 				return false;
 			}
 			Player player = (Player) sender;
-			
+
 //			IconsListGUIModel guiModel = new IconsListGUIModel(36, "Page {PAGE_NUMBER}");
 //			for (int i = 0; i < 100; i++) {
 //				final int iFinal = i;
@@ -50,7 +51,7 @@ public class DRGuisCommands extends RootCommand {
 //						(Player currentPlayer) -> currentPlayer.getInventory().addItem(new ItemStack(Material.values()[iFinal])))));
 //			}
 //			GUIsAPI.showGUIToPlayer(player, guiModel.getGUI(player));
-			
+
 //			GUIView guiView1 = new SparseGUIView(36, label);
 //			guiView1.setIcon(0,
 //					new ActionIcon(new ItemStack(Material.APPLE), true,
@@ -63,7 +64,7 @@ public class DRGuisCommands extends RootCommand {
 //									.addItem(new ItemStack(Material.COOKED_BEEF, 64)))));
 //			GUIsAPI.showGUIToPlayer(player, new GUIModelsListGUIModel(36).addGUIModel(new SimpleGUIModel(guiView1))
 //					.addGUIModel(new SimpleGUIModel(guiView2)).getGUI(player));
-			
+
 			if (isEditor) {
 				GUIView editorGUIView = editor.getGUI(player);
 				GUIsAPI.showGUIToPlayer(player, editorGUIView);
@@ -71,7 +72,7 @@ public class DRGuisCommands extends RootCommand {
 				GUIsAPI.showGUIToPlayer(player, editor.getGUIModel().getGUI(player));
 			}
 			isEditor = !isEditor;
-			
+
 			FileConfigurationsUtils fcu = getPlugin().getFileConfigurationsUtils();
 			fcu.loadFileConfiguration("output.yml");
 			if (fcu.hasKey("output.yml", "ItemStack")) {
@@ -103,7 +104,8 @@ public class DRGuisCommands extends RootCommand {
 			if (fcu.hasKey("output.yml", "gui")) {
 				try {
 					System.out.println(fcu.getSerializable("output.yml", "gui"));
-					GUIsAPI.showGUIToPlayer(player, ((GUIEditor) fcu.getSerializable("output.yml", "gui")).getGUI(player));
+					GUIsAPI.showGUIToPlayer(player,
+							((GUIEditor) fcu.getSerializable("output.yml", "gui")).getGUI(player));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -125,8 +127,10 @@ public class DRGuisCommands extends RootCommand {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			fcu.save("output.yml");
-			
+			fcu.setObject("items.yml", "item", new ItemStackBuilder(Material.GREEN_GLAZED_TERRACOTTA).setAmount(10)
+					.setDisplayName("Green Glazed Terracotta!").setLoreString("Green Glazed Terracotta Lore!").setUnbreakable(true).build());
+			fcu.save("items.yml");
+
 		}
 		return true;
 	}

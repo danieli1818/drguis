@@ -1,6 +1,9 @@
 package drguis.common.icons;
 
-public interface IconProperties {
+import java.io.Serializable;
+import java.util.Set;
+
+public interface IconProperties extends Serializable {
 
 	public Boolean getBoolean(String propertyName);
 	
@@ -11,5 +14,7 @@ public interface IconProperties {
 	public String getString(String propertyName);
 	
 	public Object getObject(String propertyName);
+	
+	public Set<String> getProperties();
 	
 }

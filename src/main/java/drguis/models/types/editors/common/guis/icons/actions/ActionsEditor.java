@@ -1,4 +1,4 @@
-package drguis.models.types.editors.common.guis;
+package drguis.models.types.editors.common.guis.icons.actions;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import drguis.api.GUIsAPI;
 import drguis.common.Action;
 import drguis.common.CloseReason;
-import drguis.common.Icon;
 import drguis.common.actions.OpenGUIAction;
 import drguis.common.events.IconClickEvent;
 import drguis.common.events.PlayerInventoryClickEvent;
@@ -17,31 +16,30 @@ import drguis.common.icons.utils.IconMetadata;
 import drguis.common.regions.SeriesRegion;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
-import drguis.models.types.editors.common.GUIMode;
+import drguis.models.types.editors.common.CommonGUIMode;
 import drguis.models.types.editors.common.icons.ModeActionsIcon;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
-import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
 
-public class ActionsIconEditor extends IconsListGUIModel implements GUIModel {
+public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 
 	private ActionsIcon icon;
 	private ModeActionsIcon modeIcon;
 	private ActionsIcon addActionIcon;
 
-	public ActionsIconEditor(ActionsIcon icon, int numOfRows) {
+	public ActionsEditor(ActionsIcon icon, int numOfRows) {
 		super(new SeriesRegion((numOfRows - 1) * 9), "Actions Editor Page {PAGE_NUMBER}", numOfRows * 9,
 				new IconMetadata(new ItemStack(Material.ARROW), (numOfRows - 1) * 9 + 2),
 				new IconMetadata(new ItemStack(Material.ARROW), (numOfRows * 9) - 1));
 		this.icon = icon;
 		modeIcon = new ModeActionsIcon();
-		modeIcon.setIcon(GUIMode.NORMAL, new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
-		modeIcon.setIcon(GUIMode.DELETE, new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true)); // REMOVE
+		modeIcon.setIcon(CommonGUIMode.NORMAL, new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
+		modeIcon.setIcon(CommonGUIMode.DELETE, new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true)); // REMOVE
 		addActionIcon = new ActionsIcon(new ItemStack(Material.APPLE), true);
 		addActionIcon
-				.addAction(new OpenGUIAction((Player player) -> new AddActionMenuEditor(this.icon).getGUI(player), CloseReason.OPENING_GUI));
+				.addAction(new OpenGUIAction((Player player) -> new AddActionEditor(this.icon).getGUI(player), CloseReason.OPENING_GUI));
 		for (Action action : icon.getActions()) {
 			addIcon(action.getActionIcon());
 		}
@@ -66,23 +64,29 @@ public class ActionsIconEditor extends IconsListGUIModel implements GUIModel {
 
 	@Override
 	public void onIconClickEvent(IconClickEvent event) {
-		if (event.getIconIndex() >= getGuiPageSize() - 9) {
+		int iconSlot = event.getIconIndex();
+		if (!getRegion().isInRegion(iconSlot)) {
 			IconsFunctionsUtils.defaultOnIconClickEvent(event);
 			GUIsAPI.updateGUIToPlayer(event.getPlayer());
-			return;
 		}
-		switch (modeIcon.getMode()) {
-		case EDIT:
-			event.setCancelled(true);
-			Icon icon = event.getIcon();
-			if (icon != null) {
-				Player player = event.getPlayer();
-				GUIsUtils.openSubGUI(player, new ActionsIconMenuEditor(icon)::getGUI);
-			}
-			break;
-		default: // NORMAL
-			break;
-		}
+		// TODO Add support to changing places of actions icons in order to change the order
+//		if (event.getIconIndex() >= getGuiPageSize() - 9) {
+//			IconsFunctionsUtils.defaultOnIconClickEvent(event);
+//			GUIsAPI.updateGUIToPlayer(event.getPlayer());
+//			return;
+//		}
+//		switch (modeIcon.getMode()) {
+//		case EDIT:
+//			event.setCancelled(true);
+//			Icon icon = event.getIcon();
+//			if (icon != null) {
+//				Player player = event.getPlayer();
+//				GUIsUtils.openSubGUI(player, new ActionsIconEditor(icon)::getGUI);
+//			}
+//			break;
+//		default: // NORMAL
+//			break;
+//		}
 	}
 
 	@Override

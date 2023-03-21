@@ -46,4 +46,9 @@ public class ListRegion implements Region {
 		return regionList.size();
 	}
 
+	@Override
+	public boolean isInRegion(int index) {
+		return regionList.contains(index);
+	}
+
 }
