@@ -205,8 +205,11 @@ public class SimpleGUIEditor implements GUIEditor {
 			fromSlot = event.getStartDragEvent().getSlot();
 			editorGuiView.setIcon(fromSlot, null);
 			ItemStack cursorItem = event.getDropEvent().getCursor();
-			if (cursorItem != null) {
-				event.getPlayer().getInventory().setItem(event.getDropEvent().getSlot(), new ItemStack(cursorItem));
+			int dropSlot = event.getDropEvent().getSlot();
+			if (dropSlot < 0) { // Dropping item outside the inventory
+				event.getPlayer().setItemOnCursor(null);
+			} else if (cursorItem != null) {
+				event.getPlayer().getInventory().setItem(dropSlot, new ItemStack(cursorItem));
 			}
 			break;
 		case INNER:

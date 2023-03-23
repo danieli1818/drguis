@@ -52,6 +52,7 @@ public class CommandActionEditor implements GUIModel {
 				})));
 		guiView.setIcon(31, new ActionIcon(getFinishItemStack(), true, new ConsumerAction((Player currentPlayer) -> {
 			icon.addAction(new CommandAction(command));
+			GUIsUtils.openPrevGUI(player);
 		})));
 		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
 			guiView.setIcon(28, new PrevGUIIcon());

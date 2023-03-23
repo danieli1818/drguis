@@ -47,8 +47,13 @@ public class ListRegion implements Region {
 	}
 
 	@Override
-	public boolean isInRegion(int index) {
-		return regionList.contains(index);
+	public boolean isInRegion(int slotIndex) {
+		return regionList.contains(slotIndex);
+	}
+
+	@Override
+	public int getRegionIndex(int slotIndex) {
+		return regionList.indexOf(slotIndex);
 	}
 
 }

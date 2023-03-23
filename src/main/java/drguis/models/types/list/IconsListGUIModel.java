@@ -100,5 +100,31 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 	public int getNumOfPages(Player player) {
 		return (int) Math.ceil(((double) getIcons().size()) / getRegion().getSize());
 	}
+	
+	protected Icon getIcon(int index) {
+		if (index < 0 || index > icons.size()) {
+			return null;
+		}
+		return icons.get(index);
+	}
+	
+	protected boolean setIcon(int index, Icon icon) {
+		if (index < 0) {
+			return false;
+		}
+		if (index < icons.size()) {
+			icons.set(index, icon);
+			return true;
+		}
+		return false;
+	}
+	
+	protected int getIconIndex(GUIView guiView, int slot) {
+		int pageNum = getPageNumberOfGUIView(guiView);
+		Region region = getRegion();
+		int regionSize = region.getSize();
+		int regionSlot = region.getRegionIndex(slot);
+		return regionSize * pageNum + regionSlot;
+	}
 
 }

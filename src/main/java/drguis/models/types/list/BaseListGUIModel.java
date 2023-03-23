@@ -16,6 +16,7 @@ import drguis.common.icons.properties.SimpleIconProperties;
 import drguis.common.icons.types.ActionsIcon;
 import drguis.common.icons.utils.IconMetadata;
 import drguis.common.identifiers.IntGUIViewIdentifier;
+import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
@@ -94,6 +95,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		}
 		return new ActionsIcon(prevIconMetadata.getItemStack(), new SimpleIconProperties())
 				.addAction(new ConsumerAction((Player actionPlayer) -> {
+					PlayersGUIsCloseReasonsManager.getInstance().setCloseReason(player.getUniqueId(), CloseReason.PREV_PAGE);
 					GUIsAPI.showGUIToPlayer(actionPlayer, getGUIPage(actionPlayer, currentPageIndex - 1));
 				}));
 	}
@@ -104,6 +106,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		}
 		return new ActionsIcon(nextIconMetadata.getItemStack(), new SimpleIconProperties())
 				.addAction(new ConsumerAction((Player actionPlayer) -> {
+					PlayersGUIsCloseReasonsManager.getInstance().setCloseReason(player.getUniqueId(), CloseReason.NEXT_PAGE);
 					GUIsAPI.showGUIToPlayer(actionPlayer, getGUIPage(actionPlayer, currentPageIndex + 1));
 				}));
 	}
@@ -120,7 +123,7 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 	@Override
 	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
 	}
-	
+
 	@Override
 	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
 	}
@@ -155,18 +158,26 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		return new ItemStackBuilder(Material.ARROW).setDisplayName("Next Page")
 				.setLoreString("Click to go to the next page").build();
 	}
-	
+
 	@Override
 	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
-		GUIViewIdentifier identifier = prevGUIView.getIdentifier();
-		if (identifier == null) {
+		int pageNumber = getPageNumberOfGUIView(prevGUIView);
+		if (pageNumber < 0) {
 			return getGUI(player);
+		}
+		return getGUIPage(player, pageNumber);
+	}
+
+	protected int getPageNumberOfGUIView(GUIView guiView) {
+		GUIViewIdentifier identifier = guiView.getIdentifier();
+		if (identifier == null) {
+			return -1;
 		}
 		Object id = identifier.getValue("id");
 		if (id instanceof Integer) {
-			return getGUIPage(player, (Integer) id);
+			return (int) id;
 		}
-		return getGUI(player);
+		return -1;
 	}
-
+	
 }

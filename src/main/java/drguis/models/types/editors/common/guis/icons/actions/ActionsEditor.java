@@ -2,12 +2,16 @@ package drguis.models.types.editors.common.guis.icons.actions;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
 import drguis.common.Action;
 import drguis.common.CloseReason;
+import drguis.common.Icon;
+import drguis.common.Region;
 import drguis.common.actions.OpenGUIAction;
+import drguis.common.events.GUIRelation;
 import drguis.common.events.IconClickEvent;
 import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.common.icons.types.ActionsIcon;
@@ -21,7 +25,10 @@ import drguis.models.types.editors.common.icons.ModeActionsIcon;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
+import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
+import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
+import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 
 public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 
@@ -92,6 +99,79 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 	@Override
 	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {
 		event.setCancelled(true);
+	}
+	
+	@Override
+	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
+		int fromSlot = event.getStartDragEvent().getSlot();
+		int toSlot = event.getDropEvent().getSlot();
+		System.out.println("Yay inside on normal drag and drop event!");
+		System.out.println("GUI relation: " + relation);
+		switch (relation) {
+		case INNER:
+			if (fromSlot != toSlot) {
+				System.out.println("Yay in normal drag and drop event!");
+				Region region = getRegion();
+				if (!region.isInRegion(fromSlot) || !region.isInRegion(toSlot)) {
+					System.out.println("Canceling drop event since one of the slots isn't in the region!");
+					cancelDropEvent(event.getDropEvent());
+				} else {
+					GUIView guiView = GUIsUtils.getOpenGUIView(event.getPlayer());
+					int fromIconIndex = getIconIndex(guiView, fromSlot);
+					int toIconIndex = getIconIndex(guiView, toSlot);
+					int fromRegionSlot = region.getRegionIndex(fromSlot);
+					int toRegionSlot = region.getRegionIndex(toSlot);
+					System.out.println("Swapping " + fromRegionSlot + " and " + toRegionSlot);
+					Action fromAction = icon.getActions().get(fromIconIndex);
+					icon.setAction(fromIconIndex, icon.getActions().get(toIconIndex));
+					icon.setAction(toIconIndex, fromAction);
+					Icon fromIcon = getIcon(fromRegionSlot);
+					setIcon(fromRegionSlot, getIcon(toRegionSlot));
+					setIcon(toRegionSlot, fromIcon);
+					event.getPlayer().setItemOnCursor(null);
+				}
+			}
+			GUIsAPI.updateGUIToPlayer(event.getPlayer());
+			break;
+		case FROM:
+			System.out.println("Yay inside FROM!");
+			if (toSlot < 0) { // Dropping item outside the inventory
+				System.out.println("Yay inside dropping item outside the inventory!");
+				Region region = getRegion();
+				if (region.isInRegion(fromSlot)) {
+					System.out.println("Yay inside the region!");
+					int fromRegionSlot = region.getRegionIndex(fromSlot);
+					icon.setAction(fromRegionSlot, null);
+					break;
+				}
+			}
+		default:
+			event.getDropEvent().setCancelled(true); // TODO Check if works else change to cancelDropEvent
+		}
+	}
+	
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
+		
+	}
+	
+	private void cancelDropEvent(InventoryClickEvent dropEvent) {
+		Player player = (Player) dropEvent.getWhoClicked();
+		dropEvent.setCancelled(true);
+		player.setItemOnCursor(null);
+	}
+	
+	@Override
+	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		int pageNumber = getPageNumberOfGUIView(prevGUIView);
+		if (pageNumber < 0) {
+			return null;
+		}
+		ActionsEditor actionsEditor = new ActionsEditor(icon, getGuiPageSize() / 9);
+		if (actionsEditor.getNumOfPages(player) < pageNumber) {
+			pageNumber = 0;
+		}
+		return actionsEditor.getGUIPage(player, pageNumber);
 	}
 
 }
