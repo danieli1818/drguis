@@ -41,9 +41,9 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 				new IconMetadata(new ItemStack(Material.ARROW), (numOfRows - 1) * 9 + 2),
 				new IconMetadata(new ItemStack(Material.ARROW), (numOfRows * 9) - 1));
 		this.icon = icon;
-		modeIcon = new ModeActionsIcon();
-		modeIcon.setIcon(CommonGUIMode.NORMAL, new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
-		modeIcon.setIcon(CommonGUIMode.DELETE, new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true)); // REMOVE
+		modeIcon = new ModeActionsIcon("swap");
+		modeIcon.setIcon("swap", new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
+		modeIcon.setIcon("move", new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true));
 		addActionIcon = new ActionsIcon(new ItemStack(Material.APPLE), true);
 		addActionIcon
 				.addAction(new OpenGUIAction((Player player) -> new AddActionEditor(this.icon).getGUI(player), CloseReason.OPENING_GUI));
@@ -98,7 +98,10 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 
 	@Override
 	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {
-		event.setCancelled(true);
+		System.out.println("Yay in onPlayerInventoryClickEvent!");
+		if (event.getPlayer().getItemOnCursor() == null || event.getPlayer().getItemOnCursor().getType() == Material.AIR) {
+			event.setCancelled(true);
+		}
 	}
 	
 	@Override
@@ -119,32 +122,54 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 					GUIView guiView = GUIsUtils.getOpenGUIView(event.getPlayer());
 					int fromIconIndex = getIconIndex(guiView, fromSlot);
 					int toIconIndex = getIconIndex(guiView, toSlot);
-					int fromRegionSlot = region.getRegionIndex(fromSlot);
-					int toRegionSlot = region.getRegionIndex(toSlot);
-					System.out.println("Swapping " + fromRegionSlot + " and " + toRegionSlot);
-					Action fromAction = icon.getActions().get(fromIconIndex);
-					icon.setAction(fromIconIndex, icon.getActions().get(toIconIndex));
-					icon.setAction(toIconIndex, fromAction);
-					Icon fromIcon = getIcon(fromRegionSlot);
-					setIcon(fromRegionSlot, getIcon(toRegionSlot));
-					setIcon(toRegionSlot, fromIcon);
-					event.getPlayer().setItemOnCursor(null);
+					switch (modeIcon.getMode()) {
+					case "swap":
+						if (toIconIndex >= icon.getActions().size()) {
+							cancelDropEvent(event.getDropEvent());
+						} else {
+							int fromRegionSlot = region.getRegionIndex(fromSlot);
+							int toRegionSlot = region.getRegionIndex(toSlot);
+							System.out.println("Swapping " + fromRegionSlot + " and " + toRegionSlot);
+							Action fromAction = icon.getActions().get(fromIconIndex);
+							icon.setAction(fromIconIndex, icon.getActions().get(toIconIndex));
+							icon.setAction(toIconIndex, fromAction);
+							Icon fromIcon = getIcon(fromRegionSlot);
+							setIcon(fromRegionSlot, getIcon(toRegionSlot));
+							setIcon(toRegionSlot, fromIcon);
+							event.getPlayer().setItemOnCursor(null);
+						}
+						break;
+					case "move":
+						icon.moveAction(fromIconIndex, toIconIndex);
+						break;
+					default:
+						break;
+					}
 				}
 			}
 			GUIsAPI.updateGUIToPlayer(event.getPlayer());
 			break;
 		case FROM:
 			System.out.println("Yay inside FROM!");
-			if (toSlot < 0) { // Dropping item outside the inventory
-				System.out.println("Yay inside dropping item outside the inventory!");
-				Region region = getRegion();
-				if (region.isInRegion(fromSlot)) {
-					System.out.println("Yay inside the region!");
-					int fromRegionSlot = region.getRegionIndex(fromSlot);
-					icon.setAction(fromRegionSlot, null);
-					break;
-				}
+			Region region = getRegion();
+			if (region.isInRegion(fromSlot)) {
+				System.out.println("Yay inside the region!");
+				GUIView guiView = GUIsUtils.getOpenGUIView(event.getPlayer());
+				int fromIconIndex = getIconIndex(guiView, fromSlot);
+				icon.removeAction(fromIconIndex);
+				GUIsAPI.updateGUIToPlayer(event.getPlayer());
+				break;
 			}
+//			if (toSlot < 0) { // Dropping item outside the inventory
+//				System.out.println("Yay inside dropping item outside the inventory!");
+//				Region region = getRegion();
+//				if (region.isInRegion(fromSlot)) {
+//					System.out.println("Yay inside the region!");
+//					int fromRegionSlot = region.getRegionIndex(fromSlot);
+//					icon.setAction(fromRegionSlot, null);
+//					break;
+//				}
+//			}
 		default:
 			event.getDropEvent().setCancelled(true); // TODO Check if works else change to cancelDropEvent
 		}
@@ -152,7 +177,7 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 	
 	@Override
 	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
-		
+		System.out.println("Yay in drag inventory drag and drop event!");
 	}
 	
 	private void cancelDropEvent(InventoryClickEvent dropEvent) {
@@ -163,15 +188,27 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 	
 	@Override
 	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
+		clearIcons();
+		for (Action action : icon.getActions()) {
+			addIcon(action.getActionIcon());
+		}
 		int pageNumber = getPageNumberOfGUIView(prevGUIView);
-		if (pageNumber < 0) {
-			return null;
-		}
-		ActionsEditor actionsEditor = new ActionsEditor(icon, getGuiPageSize() / 9);
-		if (actionsEditor.getNumOfPages(player) < pageNumber) {
-			pageNumber = 0;
-		}
-		return actionsEditor.getGUIPage(player, pageNumber);
+		return getGUIPage(player, pageNumber);
+//		int pageNumber = getPageNumberOfGUIView(prevGUIView);
+//		if (pageNumber < 0) {
+//			return null;
+//		}
+//		ActionsEditor actionsEditor = new ActionsEditor(icon, getGuiPageSize() / 9);
+//		if (actionsEditor.getNumOfPages(player) < pageNumber) {
+//			pageNumber = 0;
+//		}
+//		return actionsEditor.getGUIPage(player, pageNumber);
+	}
+	
+	@Override
+	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
+		super.onGUICloseEvent(guiView, closeReason, player);
+		player.setItemOnCursor(null);
 	}
 
 }

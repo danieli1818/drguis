@@ -60,6 +60,7 @@ drguis\common\actions\CloseGUIAction.class
 drguis\models\types\editors\common\guis\actions\CommandActionEditor.class
 drguis\api\GUIsAPI.class
 drguis\utils\GUIsUtils.class
+drguis\models\types\editors\common\guis\icons\actions\ActionsEditor$1.class
 drguis\views\types\SparseGUIView.class
 drguis\models\types\editors\common\guis\icons\actions\ActionsIconEditor.class
 drguis\common\regions\SeriesRegion.class

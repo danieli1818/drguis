@@ -180,4 +180,12 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		return -1;
 	}
 	
+	protected int getPrevPageIconIndex() {
+		return prevIconMetadata.getIndex();
+	}
+	
+	protected int getNextPageIconIndex() {
+		return nextIconMetadata.getIndex();
+	}
+	
 }

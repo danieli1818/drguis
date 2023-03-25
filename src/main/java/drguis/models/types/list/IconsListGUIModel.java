@@ -126,5 +126,9 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 		int regionSlot = region.getRegionIndex(slot);
 		return regionSize * pageNum + regionSlot;
 	}
+	
+	protected void clearIcons() {
+		icons.clear();
+	}
 
 }

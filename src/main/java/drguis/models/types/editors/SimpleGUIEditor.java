@@ -10,12 +10,10 @@ import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
-import drguis.common.Action;
 import drguis.common.CloseReason;
 import drguis.common.Icon;
 import drguis.common.events.GUIRelation;
@@ -251,9 +249,7 @@ public class SimpleGUIEditor implements GUIEditor {
 		System.out.println("New Items: " + event.getDropEvent().getNewItems());
 		System.out.println("Old Cursor: " + event.getDropEvent().getOldCursor());
 		System.out.println("Cursor: " + event.getDropEvent().getCursor());
-		// TODO handle event
 		InventoryClickEvent startDragEvent = event.getStartDragEvent();
-		InventoryDragEvent dropEvent = event.getDropEvent();
 		int fromSlot = startDragEvent.getSlot();
 		Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> topAndBottomInventoriesNewItems = getTopAndBottomInventoriesNewItems(
 				event.getDropEvent().getNewItems(), event.getDropEvent().getView());
