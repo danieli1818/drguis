@@ -188,4 +188,14 @@ public abstract class BaseListGUIModel implements ListGUIModel {
 		return nextIconMetadata.getIndex();
 	}
 	
+	protected Icon getGUIViewIcon(Player player, GUIView guiView, int slot) {
+		if (slot == getPrevPageIconIndex()) {
+			return getPrevIcon(player, getPageNumberOfGUIView(guiView));
+		}
+		if (slot == getNextPageIconIndex()) {
+			return getNextIcon(player, getPageNumberOfGUIView(guiView));
+		}
+		return null;
+	}
+	
 }

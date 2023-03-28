@@ -1,11 +1,15 @@
 package drguis.utils;
 
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
 import drguis.common.CloseReason;
@@ -13,6 +17,8 @@ import drguis.management.GUIsStack;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.views.GUIView;
+import drlibs.utils.functions.InventoriesUtils;
+import drlibs.utils.functions.InventoriesUtils.InventorySlotData;
 
 public class GUIsUtils {
 
@@ -78,6 +84,24 @@ public class GUIsUtils {
 			return (GUIView) inventoryHolder;
 		}
 		return null;
+	}
+	
+	public static Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> getTopAndBottomInventoriesNewItems(
+			Map<Integer, ItemStack> newItems, InventoryView inventoryView) {
+		Map<Integer, ItemStack> topInventoryNewItems = new HashMap<>();
+		Map<Integer, ItemStack> bottomInventoryNewItems = new HashMap<>();
+		for (Map.Entry<Integer, ItemStack> newItemEntry : newItems.entrySet()) {
+			int rawSlot = newItemEntry.getKey();
+			ItemStack itemStack = newItemEntry.getValue();
+			InventorySlotData inventorySlotData = InventoriesUtils.parseRawSlot(inventoryView, rawSlot);
+			if (inventorySlotData.isTopInventory()) {
+				topInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
+			} else {
+				bottomInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
+			}
+		}
+		return new AbstractMap.SimpleEntry<Map<Integer, ItemStack>, Map<Integer, ItemStack>>(topInventoryNewItems,
+				bottomInventoryNewItems);
 	}
 	
 }

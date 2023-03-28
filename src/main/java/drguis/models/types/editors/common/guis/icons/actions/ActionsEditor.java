@@ -1,8 +1,11 @@
 package drguis.models.types.editors.common.guis.icons.actions;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
@@ -20,13 +23,13 @@ import drguis.common.icons.utils.IconMetadata;
 import drguis.common.regions.SeriesRegion;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
-import drguis.models.types.editors.common.CommonGUIMode;
 import drguis.models.types.editors.common.icons.ModeActionsIcon;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.models.types.list.IconsListGUIModel;
 import drguis.models.utils.IconsFunctionsUtils;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
+import drlibs.events.inventory.DragAndDropInventoryEvent;
 import drlibs.events.inventory.DragInventoryDragAndDropInventoryEvent;
 import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 
@@ -45,8 +48,8 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 		modeIcon.setIcon("swap", new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
 		modeIcon.setIcon("move", new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true));
 		addActionIcon = new ActionsIcon(new ItemStack(Material.APPLE), true);
-		addActionIcon
-				.addAction(new OpenGUIAction((Player player) -> new AddActionEditor(this.icon).getGUI(player), CloseReason.OPENING_GUI));
+		addActionIcon.addAction(new OpenGUIAction((Player player) -> new AddActionEditor(this.icon).getGUI(player),
+				CloseReason.OPENING_GUI));
 		for (Action action : icon.getActions()) {
 			addIcon(action.getActionIcon());
 		}
@@ -73,10 +76,14 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 	public void onIconClickEvent(IconClickEvent event) {
 		int iconSlot = event.getIconIndex();
 		if (!getRegion().isInRegion(iconSlot)) {
-			IconsFunctionsUtils.defaultOnIconClickEvent(event);
-			GUIsAPI.updateGUIToPlayer(event.getPlayer());
+			ItemStack cursorItem = event.getPlayer().getItemOnCursor();
+			if (cursorItem == null || cursorItem.getType() == Material.AIR) {
+				IconsFunctionsUtils.defaultOnIconClickEvent(event);
+				GUIsAPI.updateGUIToPlayer(event.getPlayer());
+			}
 		}
-		// TODO Add support to changing places of actions icons in order to change the order
+		// TODO Add support to changing places of actions icons in order to change the
+		// order
 //		if (event.getIconIndex() >= getGuiPageSize() - 9) {
 //			IconsFunctionsUtils.defaultOnIconClickEvent(event);
 //			GUIsAPI.updateGUIToPlayer(event.getPlayer());
@@ -99,51 +106,75 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 	@Override
 	public void onPlayerInventoryClickEvent(PlayerInventoryClickEvent event) {
 		System.out.println("Yay in onPlayerInventoryClickEvent!");
-		if (event.getPlayer().getItemOnCursor() == null || event.getPlayer().getItemOnCursor().getType() == Material.AIR) {
+		if (event.getPlayer().getItemOnCursor() == null
+				|| event.getPlayer().getItemOnCursor().getType() == Material.AIR) {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@Override
 	public void onNormalDragAndDropEvent(NormalDragAndDropInventoryEvent event, GUIRelation relation) {
 		int fromSlot = event.getStartDragEvent().getSlot();
 		int toSlot = event.getDropEvent().getSlot();
+		handleDragAndDropEvent(event, fromSlot, toSlot, relation, true);
+	}
+
+	@Override
+	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
+		System.out.println("Yay in drag inventory drag and drop event!");
+		InventoryDragEvent dropEvent = event.getDropEvent();
+		Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> topAndBottomInventoriesNewItems = GUIsUtils
+				.getTopAndBottomInventoriesNewItems(dropEvent.getNewItems(), dropEvent.getView());
+		Map<Integer, ItemStack> topInventoryNewItems = topAndBottomInventoriesNewItems.getKey();
+		if (topInventoryNewItems.isEmpty()) {
+			return;
+		}
+		System.out.println("Player's cursor:" + event.getPlayer().getItemOnCursor());
+		System.out.println("Drop event's cursor:" + event.getDropEvent().getCursor());
+		handleDragAndDropEvent(event, event.getStartDragEvent().getSlot(),
+				Collections.min(topInventoryNewItems.keySet()), isFromGUI ? GUIRelation.INNER : GUIRelation.TO, false);
+	}
+
+	private void handleDragAndDropEvent(DragAndDropInventoryEvent event, int fromSlot, int toSlot, GUIRelation relation,
+			boolean cancelIfNeeded) {
 		System.out.println("Yay inside on normal drag and drop event!");
 		System.out.println("GUI relation: " + relation);
+		System.out.println("From Slot: " + fromSlot);
+		System.out.println("To Slot: " + toSlot);
 		switch (relation) {
 		case INNER:
 			if (fromSlot != toSlot) {
 				System.out.println("Yay in normal drag and drop event!");
 				Region region = getRegion();
-				if (!region.isInRegion(fromSlot) || !region.isInRegion(toSlot)) {
-					System.out.println("Canceling drop event since one of the slots isn't in the region!");
-					cancelDropEvent(event.getDropEvent());
+				if (!region.isInRegion(fromSlot)) {
+					System.out.println("Canceling drop event since from slot isn't in the region!");
+					if (cancelIfNeeded) {
+						cancelDropEvent(event);
+					}
 				} else {
-					GUIView guiView = GUIsUtils.getOpenGUIView(event.getPlayer());
-					int fromIconIndex = getIconIndex(guiView, fromSlot);
-					int toIconIndex = getIconIndex(guiView, toSlot);
-					switch (modeIcon.getMode()) {
-					case "swap":
-						if (toIconIndex >= icon.getActions().size()) {
-							cancelDropEvent(event.getDropEvent());
+					if (region.isInRegion(toSlot)) {
+						System.out.println("From Slot: " + fromSlot + " is in region: " + region.isInRegion(fromSlot));
+						handleDragAndDropEventInRegion(event, fromSlot, toSlot, cancelIfNeeded);
+					} else {
+						if (toSlot == getPrevPageIconIndex() || toSlot == getNextPageIconIndex()) {
+							System.out.println("Yay, In prev/next icon drag and drop!");
+							ItemStack cursorItemStack = event.getPlayer().getItemOnCursor();
+							event.setCancelled(true);
+							System.out.println("Yay default on icon click event: "
+									+ GUIsUtils.getOpenGUIView(event.getPlayer()).getIcon(toSlot));
+							IconsFunctionsUtils.defaultOnIconClickEvent(
+									GUIsUtils.getOpenGUIView(event.getPlayer()).getIcon(toSlot), event.getPlayer());
+							GUIsAPI.updateGUIToPlayer(event.getPlayer());
+							if (cursorItemStack != null) {
+								event.getPlayer().setItemOnCursor(new ItemStack(cursorItemStack));
+							}
+							break;
 						} else {
-							int fromRegionSlot = region.getRegionIndex(fromSlot);
-							int toRegionSlot = region.getRegionIndex(toSlot);
-							System.out.println("Swapping " + fromRegionSlot + " and " + toRegionSlot);
-							Action fromAction = icon.getActions().get(fromIconIndex);
-							icon.setAction(fromIconIndex, icon.getActions().get(toIconIndex));
-							icon.setAction(toIconIndex, fromAction);
-							Icon fromIcon = getIcon(fromRegionSlot);
-							setIcon(fromRegionSlot, getIcon(toRegionSlot));
-							setIcon(toRegionSlot, fromIcon);
-							event.getPlayer().setItemOnCursor(null);
+							System.out.println("Canceling drop event since to slot isn't in the region!");
+							if (cancelIfNeeded) {
+								cancelDropEvent(event);
+							}
 						}
-						break;
-					case "move":
-						icon.moveAction(fromIconIndex, toIconIndex);
-						break;
-					default:
-						break;
 					}
 				}
 			}
@@ -171,21 +202,58 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 //				}
 //			}
 		default:
-			event.getDropEvent().setCancelled(true); // TODO Check if works else change to cancelDropEvent
+			event.setCancelled(true); // TODO Check if works else change to cancelDropEvent
 		}
 	}
-	
-	@Override
-	public void onDragInventoryDragAndDropEvent(DragInventoryDragAndDropInventoryEvent event, boolean isFromGUI) {
-		System.out.println("Yay in drag inventory drag and drop event!");
+
+	private void handleDragAndDropEventInRegion(DragAndDropInventoryEvent event, int fromSlot, int toSlot,
+			boolean cancelIfNeeded) {
+		GUIView guiView = GUIsUtils.getOpenGUIView(event.getPlayer());
+		GUIView fromSlotGUIView = guiView;
+		Object fromSlotClickedInventoryHolder = event.getStartDragEvent().getClickedInventory().getHolder();
+		if (fromSlotClickedInventoryHolder instanceof GUIView) {
+			fromSlotGUIView = (GUIView) fromSlotClickedInventoryHolder;
+		}
+		int fromIconIndex = getIconIndex(fromSlotGUIView, fromSlot);
+		int toIconIndex = getIconIndex(guiView, toSlot);
+		Region region = getRegion();
+		switch (modeIcon.getMode()) {
+		case "swap":
+			if (toIconIndex >= icon.getActions().size()) {
+				if (cancelIfNeeded) {
+					cancelDropEvent(event);
+				}
+			} else {
+				int fromRegionSlot = region.getRegionIndex(fromSlot);
+				int toRegionSlot = region.getRegionIndex(toSlot);
+				System.out.println("Swapping " + fromRegionSlot + " and " + toRegionSlot);
+				System.out.println("Class of start drag event: "
+						+ event.getStartDragEvent().getClickedInventory().getHolder().getClass());
+				Action fromAction = icon.getActions().get(fromIconIndex);
+				icon.setAction(fromIconIndex, icon.getActions().get(toIconIndex));
+				icon.setAction(toIconIndex, fromAction);
+				Icon fromIcon = getIcon(fromIconIndex);
+				if (fromSlotGUIView == guiView) {
+					setIcon(fromRegionSlot, getIcon(toRegionSlot));
+				}
+				setIcon(toRegionSlot, fromIcon);
+				event.getPlayer().setItemOnCursor(null);
+			}
+			break;
+		case "move":
+			icon.moveAction(fromIconIndex, toIconIndex);
+			break;
+		default:
+			break;
+		}
 	}
-	
-	private void cancelDropEvent(InventoryClickEvent dropEvent) {
-		Player player = (Player) dropEvent.getWhoClicked();
-		dropEvent.setCancelled(true);
+
+	private void cancelDropEvent(DragAndDropInventoryEvent event) {
+		Player player = event.getPlayer();
+		event.setCancelled(true);
 		player.setItemOnCursor(null);
 	}
-	
+
 	@Override
 	public GUIView getUpdatedGUI(Player player, GUIView prevGUIView) {
 		clearIcons();
@@ -204,7 +272,7 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 //		}
 //		return actionsEditor.getGUIPage(player, pageNumber);
 	}
-	
+
 	@Override
 	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
 		super.onGUICloseEvent(guiView, closeReason, player);

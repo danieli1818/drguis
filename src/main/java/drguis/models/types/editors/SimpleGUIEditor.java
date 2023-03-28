@@ -3,14 +3,12 @@ package drguis.models.types.editors;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
@@ -46,8 +44,6 @@ import drlibs.events.inventory.ItemSlotSwapEvent;
 import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drlibs.items.ItemStackBuilder;
-import drlibs.utils.functions.InventoriesUtils;
-import drlibs.utils.functions.InventoriesUtils.InventorySlotData;
 
 public class SimpleGUIEditor implements GUIEditor {
 
@@ -251,8 +247,8 @@ public class SimpleGUIEditor implements GUIEditor {
 		System.out.println("Cursor: " + event.getDropEvent().getCursor());
 		InventoryClickEvent startDragEvent = event.getStartDragEvent();
 		int fromSlot = startDragEvent.getSlot();
-		Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> topAndBottomInventoriesNewItems = getTopAndBottomInventoriesNewItems(
-				event.getDropEvent().getNewItems(), event.getDropEvent().getView());
+		Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> topAndBottomInventoriesNewItems = GUIsUtils
+				.getTopAndBottomInventoriesNewItems(event.getDropEvent().getNewItems(), event.getDropEvent().getView());
 		Map<Integer, ItemStack> topInventoryNewItems = topAndBottomInventoriesNewItems.getKey();
 		Map<Integer, ItemStack> bottomInventoryNewItems = topAndBottomInventoriesNewItems.getValue();
 		if (isFromGUI) {
@@ -262,7 +258,7 @@ public class SimpleGUIEditor implements GUIEditor {
 				newIcon.setItemStack(new ItemStack(entry.getValue()));
 				editorGuiView.setIcon(entry.getKey(), newIcon);
 			}
-			if (!topInventoryNewItems.containsKey(fromSlot) ) {
+			if (!topInventoryNewItems.containsKey(fromSlot)) {
 				editorGuiView.setIcon(fromSlot, null);
 			}
 		} else {
@@ -349,24 +345,6 @@ public class SimpleGUIEditor implements GUIEditor {
 		event.getPlayer().setItemOnCursor(null);
 		GUIsAPI.updateGUIToPlayer(event.getPlayer());
 		event.getPlayer().setItemOnCursor(null);
-	}
-
-	private Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> getTopAndBottomInventoriesNewItems(
-			Map<Integer, ItemStack> newItems, InventoryView inventoryView) {
-		Map<Integer, ItemStack> topInventoryNewItems = new HashMap<>();
-		Map<Integer, ItemStack> bottomInventoryNewItems = new HashMap<>();
-		for (Map.Entry<Integer, ItemStack> newItemEntry : newItems.entrySet()) {
-			int rawSlot = newItemEntry.getKey();
-			ItemStack itemStack = newItemEntry.getValue();
-			InventorySlotData inventorySlotData = InventoriesUtils.parseRawSlot(inventoryView, rawSlot);
-			if (inventorySlotData.isTopInventory()) {
-				topInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
-			} else {
-				bottomInventoryNewItems.put(inventorySlotData.getSlot(), itemStack);
-			}
-		}
-		return new AbstractMap.SimpleEntry<Map<Integer, ItemStack>, Map<Integer, ItemStack>>(topInventoryNewItems,
-				bottomInventoryNewItems);
 	}
 
 	@Override
