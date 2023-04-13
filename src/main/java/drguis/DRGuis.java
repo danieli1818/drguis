@@ -1,5 +1,7 @@
 package drguis;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +12,7 @@ import drguis.common.items.UsefulItemStacks;
 import drguis.listeners.GUIsModelsListener;
 import drguis.listeners.IconsListener;
 import drguis.management.ActionsManager;
+import drguis.management.GUIsEditingManager;
 import drguis.management.GUIsManager;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.models.types.editors.common.guis.actions.CommandActionEditor;
@@ -37,7 +40,7 @@ public class DRGuis extends JavaPlugin implements MessagesPlugin {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		
+
 		initializeServices();
 
 		Bukkit.getPluginManager().registerEvents(new IconsListener(), this);
@@ -47,9 +50,9 @@ public class DRGuis extends JavaPlugin implements MessagesPlugin {
 		logger = new PluginLogger(this);
 
 		fileConfigurationsUtils = new FileConfigurationsUtils(new FileConfigurationsLoader(this));
-		
+
 		initializeManagers();
-		
+
 		registerActionsIcons();
 
 		Bukkit.getPluginCommand("drguis").setExecutor(new DRGuisCommands(this));
@@ -64,30 +67,34 @@ public class DRGuis extends JavaPlugin implements MessagesPlugin {
 
 	public void registerActionsIcons() {
 		ActionsManager actionsManager = ActionsManager.getInstance();
-		actionsManager.registerActionIconData("command", new ItemStackBuilder(Material.COMMAND)
-				.setDisplayName("Command Action").setLoreString("Add command action to the icon").build(), (ActionsIcon icon) -> new CommandActionEditor(icon));
+		actionsManager.registerActionIconData("command",
+				new ItemStackBuilder(Material.COMMAND).setDisplayName("Command Action")
+						.setLoreString("Add command action to the icon").build(),
+				(ActionsIcon icon) -> new CommandActionEditor(icon));
 	}
-	
+
 	public void initializeServices() {
 		DragAndDropInventoryEventCaller.getInstance().registerService();
 		ItemSlotSwapEventCaller.getInstance().registerService();
 		MoveItemToOtherInventoryEventCaller.getInstance().registerService();
 	}
-	
+
 	public void initializeManagers() {
 		reloaderManager = new ReloaderManager(this);
 
 		MessagesStorage messagesStorage = new MessagesStorage(this);
 		messagesSender = new MessagesSender(this, messagesStorage);
-		
+
 		reloaderManager.registerReloadable(logger);
 		reloaderManager.registerReloadable(messagesStorage);
 		reloaderManager.registerReloadable(UsefulItemStacks.getInstance(this));
+		reloaderManager.registerReloadable(
+				GUIsEditingManager.getInstance(this, new File(getDataFolder().getAbsolutePath() + "/guis")));
 
 		reloaderManager.reloadAllSet();
 
 		PlayersGUIsCloseReasonsManager.getInstance(); // Initialization
-		
+
 		GUIsManager.getInstance(this);
 	}
 

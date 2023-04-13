@@ -7,5 +7,6 @@ public enum CloseReason {
 	INPUT,
 	PREV_GUI,
 	PREV_PAGE,
-	NEXT_PAGE
+	NEXT_PAGE,
+	FORCE_CLOSE
 }

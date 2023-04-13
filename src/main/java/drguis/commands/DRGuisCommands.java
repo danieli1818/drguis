@@ -9,6 +9,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import drguis.api.GUIsAPI;
+import drguis.commands.subcommands.CreateSubCommand;
+import drguis.commands.subcommands.EditSubCommand;
+import drguis.commands.subcommands.ReloadSubCommand;
+import drguis.commands.subcommands.SaveSubCommand;
+import drguis.commands.subcommands.ShowSubCommand;
 import drguis.common.icons.types.SimpleIcon;
 import drguis.messages.MessagesIDs;
 import drguis.models.types.editors.GUIEditor;
@@ -29,10 +34,15 @@ public class DRGuisCommands extends RootCommand {
 	private boolean isEditor;
 
 	public DRGuisCommands(MessagesPlugin plugin) {
-		super(plugin, DESCRIPTION, PERMISSION, MessagesIDs.DRGUIS_INVALID_COMMAND_MESSAGE_ID,
+		super(plugin, "drguis", DESCRIPTION, PERMISSION, MessagesIDs.DRGUIS_INVALID_COMMAND_MESSAGE_ID,
 				MessagesIDs.NO_PERMISSION_MESSAGE_ID, MessagesIDs.PLAYER_COMMAND_MESSAGE_ID);
 		editor = new SimpleGUIEditor(36, "First GUI Editing");
 		isEditor = true;
+		addSubCommand("reload", new ReloadSubCommand(plugin, this, "reload"));
+		addSubCommand("create", new CreateSubCommand(plugin, this, "create"));
+		addSubCommand("edit", new EditSubCommand(plugin, this, "edit"));
+		addSubCommand("show", new ShowSubCommand(plugin, this, "show"));
+		addSubCommand("save", new SaveSubCommand(plugin, this, "save"));
 	}
 
 	@Override
@@ -127,8 +137,10 @@ public class DRGuisCommands extends RootCommand {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			fcu.setObject("items.yml", "item", new ItemStackBuilder(Material.GREEN_GLAZED_TERRACOTTA).setAmount(10)
-					.setDisplayName("Green Glazed Terracotta!").setLoreString("Green Glazed Terracotta Lore!").setUnbreakable(true).build());
+			fcu.setObject("items.yml", "item",
+					new ItemStackBuilder(Material.GREEN_GLAZED_TERRACOTTA).setAmount(10)
+							.setDisplayName("Green Glazed Terracotta!").setLoreString("Green Glazed Terracotta Lore!")
+							.setUnbreakable(true).build());
 			fcu.save("items.yml");
 
 		}

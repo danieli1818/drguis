@@ -119,14 +119,6 @@ public class IconsListGUIModel extends BaseListGUIModel implements GUIModel {
 		return false;
 	}
 	
-	protected Icon getGUIViewIcon(Player player, GUIView guiView, int slot) {
-		Region region = getRegion();
-		if (region.isInRegion(slot)) {
-			return getIcon(getIconIndex(guiView, slot));
-		}
-		return super.getGUIViewIcon(player, guiView, slot);
-	}
-	
 	protected int getIconIndex(GUIView guiView, int slot) {
 		int pageNum = getPageNumberOfGUIView(guiView);
 		Region region = getRegion();

@@ -45,7 +45,7 @@ import drlibs.events.inventory.NormalDragAndDropInventoryEvent;
 import drlibs.events.inventory.moveitemtootherinventory.MoveItemToOtherInventoryEvent;
 import drlibs.items.ItemStackBuilder;
 
-public class SimpleGUIEditor implements GUIEditor {
+public class SimpleGUIEditor extends BaseGUIEditor implements GUIEditor {
 
 	/**
 	 * 
@@ -61,7 +61,7 @@ public class SimpleGUIEditor implements GUIEditor {
 	private transient ModeActionsIcon addIconTypeModeIcon;
 
 	private transient Map<String, IconsFactory> iconsFactories;
-
+	
 	private int pageSize;
 
 	public SimpleGUIEditor(int pageSize, String title) {
@@ -382,7 +382,7 @@ public class SimpleGUIEditor implements GUIEditor {
 
 	@Override
 	public void onGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
-		GUIsUtils.defaultOnGUICloseEvent(guiView, closeReason, player);
+		GUIsUtils.defaultOnGUIEditorCloseEvent(this, guiView, closeReason, player);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {

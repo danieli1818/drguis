@@ -20,6 +20,8 @@ import drguis.common.events.PlayerInventoryClickEvent;
 import drguis.common.icons.types.ActionsIcon;
 import drguis.common.icons.types.SimpleIcon;
 import drguis.common.icons.utils.IconMetadata;
+import drguis.common.items.UsefulItemStacks;
+import drguis.common.items.UsefulItemStacksIDs;
 import drguis.common.regions.SeriesRegion;
 import drguis.management.GUIsStack;
 import drguis.models.GUIModel;
@@ -45,9 +47,9 @@ public class ActionsEditor extends IconsListGUIModel implements GUIModel {
 				new IconMetadata(new ItemStack(Material.ARROW), (numOfRows * 9) - 1));
 		this.icon = icon;
 		modeIcon = new ModeActionsIcon("swap");
-		modeIcon.setIcon("swap", new SimpleIcon(new ItemStack(Material.DIAMOND_PICKAXE), true));
-		modeIcon.setIcon("move", new SimpleIcon(new ItemStack(Material.DIAMOND_SWORD), true));
-		addActionIcon = new ActionsIcon(new ItemStack(Material.APPLE), true);
+		modeIcon.setIcon("swap", new SimpleIcon(UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.swapEditingModeItemStack), true));
+		modeIcon.setIcon("move", new SimpleIcon(UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.moveEditingModeItemStack), true));
+		addActionIcon = new ActionsIcon(UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.addActionItemStack), true);
 		addActionIcon.addAction(new OpenGUIAction((Player player) -> new AddActionEditor(this.icon).getGUI(player),
 				CloseReason.OPENING_GUI));
 		for (Action action : icon.getActions()) {

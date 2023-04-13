@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
 
+import drguis.models.GUIModel;
+import drguis.models.types.editors.GUIEditor;
 import drguis.views.GUIView;
 
 public class GUIsStack {
@@ -59,7 +61,15 @@ public class GUIsStack {
 	}
 	
 	public void clearGUIViewOfPlayer(UUID uuid) {
-		guisStacksPerPlayer.remove(uuid);
+		Stack<GUIView> guiViewsStack = guisStacksPerPlayer.remove(uuid);
+		if (guiViewsStack != null) {
+			for (GUIView guiView : guiViewsStack) {
+				GUIModel guiModel = guiView.getGUIHolder();
+				if (guiModel instanceof GUIEditor) {
+					((GUIEditor) guiModel).clearEditingPlayer();
+				}
+			}
+		}
 	}
 
 }

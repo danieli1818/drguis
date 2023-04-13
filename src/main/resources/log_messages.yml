@@ -1,3 +1,4 @@
 null_sub_command_id: "Null sub command ID has been applied!"
 error_page_index_out_of_bounds: "Page index out of bounds!"
 reload_configurations_log_message: "Reloaded configurations!"
+error_cannot_create_dir: "Couldn't create dir: <dir>!"

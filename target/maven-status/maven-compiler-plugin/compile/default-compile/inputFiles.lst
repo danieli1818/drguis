@@ -5,6 +5,7 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\list\IconsListGUIModel.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\DRGuisCommands.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\views\decorators\types\IconsOverriderGUIViewDecorator.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\subcommands\EditSubCommand.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\icons\types\SimpleIcon.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\listeners\GUIsModelsListener.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\messages\MessagesIDs.java
@@ -20,6 +21,8 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\management\GUIsStack
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\icons\utils\IconMetadata.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\Icon.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\identifiers\IntGUIViewIdentifier.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\subcommands\ReloadSubCommand.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\subcommands\CreateSubCommand.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\Action.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\actions\OpenGUIAction.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\SimpleGUIEditor.java
@@ -31,6 +34,7 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\common\icons\ModeActionsIcon.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\common\factories\IconsFactory.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\views\GUIView.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\subcommands\SaveSubCommand.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\common\CommonGUIMode.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\decorators\types\SelectionGUIModelDecorator.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\common\guis\icons\actions\ActionsEditor.java
@@ -41,11 +45,13 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\events\IconCl
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\views\types\BaseGUIView.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\actions\CommandAction.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\items\UsefulItemStacksIDs.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\BaseGUIEditor.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\listeners\IconsListener.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\management\PlayersGUIsCloseReasonsManager.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\list\BaseListGUIModel.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\utils\IconsFunctionsUtils.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\icons\types\ActionsIcon.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\commands\subcommands\ShowSubCommand.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\regions\SeriesRegion.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\decorators\GUIModelDecorator.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\icons\SerializableIcon.java
@@ -65,4 +71,5 @@ C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\models\types\editors\common\guis\icons\simple\SimpleIconEditor.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\common\actions\CloseGUIAction.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\DRGuis.java
+C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\management\GUIsEditingManager.java
 C:\Users\USER\eclipse-workspace\drguis\src\main\java\drguis\utils\Functions.java

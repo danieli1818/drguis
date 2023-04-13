@@ -41,7 +41,7 @@ public class SimpleIconEditor implements GUIModel {
 		guiView.setIcon(13, new SimpleIcon(
 				new ItemStackBuilder(UsefulItemStacks.getInstance().getItemStack(UsefulItemStacksIDs.helpItemStack))
 						.setLoreString("Click on an item from your inventory to set it as the icon").build(),
-				false));
+				true));
 		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
 			guiView.setIcon(28, new PrevGUIIcon());
 		}

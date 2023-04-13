@@ -15,6 +15,7 @@ import drguis.api.GUIsAPI;
 import drguis.common.CloseReason;
 import drguis.management.GUIsStack;
 import drguis.management.PlayersGUIsCloseReasonsManager;
+import drguis.models.types.editors.GUIEditor;
 import drguis.models.types.editors.common.icons.PrevGUIIcon;
 import drguis.views.GUIView;
 import drlibs.utils.functions.InventoriesUtils;
@@ -26,17 +27,18 @@ public class GUIsUtils {
 		PlayersGUIsCloseReasonsManager.getInstance().setCloseReason(player.getUniqueId(), CloseReason.OPENING_GUI);
 		GUIsAPI.showGUIToPlayer(player, guiView);
 	}
-	
+
 	public static void openSubGUI(Player player, Function<Player, GUIView> guiViewFunction) {
 		System.out.println("Yay function openSubGUI!");
 		PlayersGUIsCloseReasonsManager.getInstance().setCloseReason(player.getUniqueId(), CloseReason.OPENING_GUI);
 		GUIsAPI.showGUIToPlayer(player, guiViewFunction);
 	}
-	
+
 	public static void defaultOnGUICloseEvent(GUIView guiView, CloseReason closeReason, Player player) {
 		System.out.println("Closed GUI for the reason: " + closeReason);
 		switch (closeReason) {
 		case NORMAL:
+		case FORCE_CLOSE:
 			GUIsStack.getInstance().clearGUIViewOfPlayer(player.getUniqueId());
 			break;
 		case UPDATING_GUI:
@@ -49,7 +51,27 @@ public class GUIsUtils {
 			GUIsStack.getInstance().addGUIViewToPlayer(player.getUniqueId(), guiView);
 		}
 	}
-	
+
+	public static void defaultOnGUIEditorCloseEvent(GUIEditor guiEditor, GUIView guiView, CloseReason closeReason,
+			Player player) {
+		System.out.println("Closed GUI for the reason: " + closeReason);
+		switch (closeReason) {
+		case NORMAL:
+		case FORCE_CLOSE:
+			GUIsStack.getInstance().clearGUIViewOfPlayer(player.getUniqueId());
+			guiEditor.clearEditingPlayer();
+			break;
+		case UPDATING_GUI:
+		case PREV_GUI:
+		case INPUT:
+		case PREV_PAGE:
+		case NEXT_PAGE:
+			break;
+		default:
+			GUIsStack.getInstance().addGUIViewToPlayer(player.getUniqueId(), guiView);
+		}
+	}
+
 	public static boolean openPrevGUI(Player player) {
 		GUIView guiView = GUIsStack.getInstance().removeGUIViewToPlayer(player.getUniqueId());
 		if (guiView != null) {
@@ -61,7 +83,7 @@ public class GUIsUtils {
 		}
 		return false;
 	}
-	
+
 	public static boolean addPrevGUIIcon(int slot, GUIView guiView, Player player) {
 		if (GUIsStack.getInstance().hasGUIView(player.getUniqueId())) {
 			guiView.setIcon(slot, new PrevGUIIcon());
@@ -69,7 +91,7 @@ public class GUIsUtils {
 		}
 		return false;
 	}
-	
+
 	public static GUIView getOpenGUIView(Player player) {
 		InventoryView inventoryView = player.getOpenInventory();
 		if (inventoryView == null) {
@@ -85,7 +107,7 @@ public class GUIsUtils {
 		}
 		return null;
 	}
-	
+
 	public static Map.Entry<Map<Integer, ItemStack>, Map<Integer, ItemStack>> getTopAndBottomInventoriesNewItems(
 			Map<Integer, ItemStack> newItems, InventoryView inventoryView) {
 		Map<Integer, ItemStack> topInventoryNewItems = new HashMap<>();
@@ -103,5 +125,5 @@ public class GUIsUtils {
 		return new AbstractMap.SimpleEntry<Map<Integer, ItemStack>, Map<Integer, ItemStack>>(topInventoryNewItems,
 				bottomInventoryNewItems);
 	}
-	
+
 }

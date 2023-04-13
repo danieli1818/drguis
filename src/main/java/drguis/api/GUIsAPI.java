@@ -5,6 +5,7 @@ import java.util.function.Function;
 import org.bukkit.entity.Player;
 
 import drguis.common.CloseReason;
+import drguis.management.GUIsStack;
 import drguis.management.PlayersGUIsCloseReasonsManager;
 import drguis.utils.GUIsUtils;
 import drguis.views.GUIView;
@@ -30,6 +31,11 @@ public class GUIsAPI {
 	
 	public static void showUpdatedGUIToPlayer(Player player, GUIView gui) {
 		player.openInventory(gui.getGUIHolder().getUpdatedGUI(player, gui).getInventory());
+	}
+	
+	public static void closeGUIAndClearGUIsStack(Player player) {
+		GUIsStack.getInstance().clearGUIViewOfPlayer(player.getUniqueId());
+		player.closeInventory();
 	}
 	
 }
