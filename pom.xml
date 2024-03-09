@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.danieli1818</groupId>
   <artifactId>drguis</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>DRGuis</name>
   <description>DRGuis Minecraft Plugin For GUIs</description>
   
